@@ -61,6 +61,10 @@
     return /深咖/.test((item.name || "") + (item.note || ""));
   }
 
+  function isLowPriority(item) {
+    return !!(item && item.low_priority);
+  }
+
   function targetStyle(occasion) {
     const found = (state.data.occasions || []).find((x) => x.id === occasion);
     return found ? found.style : "";
@@ -160,6 +164,9 @@
     if (items.some((item) => item.lookalike)) {
       warnings.push("含同款候选或同款参考：主图是同款或近似商品图，不能当成已核对为同一件。");
     }
+    if (items.some((item) => isLowPriority(item))) {
+      warnings.push("含不优先单品：这是最后才考虑的选择，因为当时没有更合适的同类单品。");
+    }
     if (
       temp !== null &&
       items.some((item) => !item.warmth && ["top", "bottom", "dress", "outerwear", "shoes"].includes(item.category))
@@ -189,9 +196,11 @@
     const order = catOrder();
     const pools = {};
     for (const cat of order) {
-      pools[cat] = available
-        .filter((item) => item.category === cat)
-        .sort((a, b) => itemScore(b, occasion, temp) - itemScore(a, occasion, temp) || a.id.localeCompare(b.id));
+      const inCat = available.filter((item) => item.category === cat);
+      const preferred = inCat.filter((item) => !isLowPriority(item));
+      pools[cat] = (preferred.length ? preferred : inCat).sort(
+        (a, b) => itemScore(b, occasion, temp) - itemScore(a, occasion, temp) || a.id.localeCompare(b.id)
+      );
     }
     const bases = [];
     for (const top of pools.top || []) for (const bottom of pools.bottom || []) bases.push([top, bottom]);
@@ -261,6 +270,9 @@
     if (item.lookalike) {
       const kind = item.image_kind && item.image_kind.indexOf("同款") >= 0 ? item.image_kind : "同款候选，非已核同一件";
       bits.push(`<span class="badge warning">${esc(kind)}</span>`);
+    }
+    if (isLowPriority(item) && item.status === "可穿") {
+      bits.push(`<span class="badge neutral">可穿·不优先</span>`);
     }
     if (item.status === "已购·仅记录") bits.push(`<span class="badge neutral">记录项·不参与搭配</span>`);
     return `<div class="badge-row">${bits.join("")}</div>`;
