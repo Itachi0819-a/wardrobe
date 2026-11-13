@@ -1,0 +1,2748 @@
+{
+  "title": "我的衣橱",
+  "summary": "143件已整理单品：57件可外出穿用并参与搭配；45件已购·仅记录（内裤、袜子、拖鞋、工作鞋、泳装、保暖内衣、护目镜等）不进入搭配；40件已淘汰/不常穿（可恢复）不进入搭配；1件女款夹克穿用人待核。已扔掉的范思哲白色胶印T恤、SolarStorm防晒帽，以及范思哲灰色做旧字母短袖T恤已从衣橱删除。数据截至2026-11-12，不是京东、淘宝或得物的全历史。已退货或取消的记录不计入衣橱。外观相似不能当成同一件；主图若是同款参考或同款候选，会单独标明。",
+  "one_liner": "优先用已确认仍保留、可穿的单品来搭配：要帅、得体、有品味，也要舒适实穿。",
+  "last_updated": "2026-11-13",
+  "data_as_of": "2026-11-12",
+  "preferences": {
+    "text": "帅、得体、有品味，舒适实穿；搭配只使用已确认仍保留、可穿的单品。不穿乐福鞋；不太喜欢深咖色，但不排斥所有棕色或卡其。白色针织上衣偏透，加内搭会热。",
+    "rules": [
+      "不穿乐福鞋",
+      "不太喜欢深咖色，但不排斥所有棕色或卡其",
+      "喜欢帅、得体、有品味、舒适实穿的搭配",
+      "搭配只使用确认仍保留、可穿的单品",
+      "退货、取消或状态不明的不算衣橱",
+      "外观相似不能当同款；主图若是同款参考或同款候选，必须标明，不能写成已核对的同一件",
+      "已淘汰/不常穿可以恢复，但不进入搭配",
+      "已购·仅记录（内裤、袜子、拖鞋、工作鞋、泳装、保暖内衣、护目镜等）不进入搭配",
+      "女款穿用人待核，不进入搭配"
+    ]
+  },
+  "categories": [
+    {
+      "id": "top",
+      "label": "上衣"
+    },
+    {
+      "id": "bottom",
+      "label": "下装"
+    },
+    {
+      "id": "dress",
+      "label": "连衣裙"
+    },
+    {
+      "id": "outerwear",
+      "label": "外套"
+    },
+    {
+      "id": "shoes",
+      "label": "鞋"
+    },
+    {
+      "id": "bag",
+      "label": "包"
+    },
+    {
+      "id": "accessory",
+      "label": "配饰"
+    }
+  ],
+  "colors": [
+    {
+      "id": "black",
+      "label": "黑"
+    },
+    {
+      "id": "white",
+      "label": "白"
+    },
+    {
+      "id": "gray",
+      "label": "灰"
+    },
+    {
+      "id": "navy",
+      "label": "藏蓝"
+    },
+    {
+      "id": "blue",
+      "label": "蓝"
+    },
+    {
+      "id": "brown",
+      "label": "棕"
+    },
+    {
+      "id": "beige",
+      "label": "米/卡其"
+    },
+    {
+      "id": "red",
+      "label": "红"
+    },
+    {
+      "id": "green",
+      "label": "绿"
+    },
+    {
+      "id": "other",
+      "label": "其他"
+    }
+  ],
+  "statuses": [
+    {
+      "id": "可穿",
+      "label": "可穿",
+      "tone": "success",
+      "in_outfit": true
+    },
+    {
+      "id": "已购·仅记录",
+      "label": "已购·仅记录",
+      "tone": "neutral",
+      "in_outfit": false
+    },
+    {
+      "id": "已淘汰/不常穿",
+      "label": "已淘汰/不常穿",
+      "tone": "warning",
+      "in_outfit": false
+    },
+    {
+      "id": "女款待核",
+      "label": "女款·穿用人待核",
+      "tone": "danger",
+      "in_outfit": false
+    }
+  ],
+  "occasions": [
+    {
+      "id": "daily",
+      "label": "日常",
+      "style": "casual"
+    },
+    {
+      "id": "work",
+      "label": "上班工地",
+      "style": "smart"
+    },
+    {
+      "id": "date",
+      "label": "约会",
+      "style": ""
+    },
+    {
+      "id": "formal",
+      "label": "正式",
+      "style": "formal"
+    },
+    {
+      "id": "sport",
+      "label": "运动",
+      "style": "sport"
+    }
+  ],
+  "scoring": {
+    "preferred_tops": {
+      "ck-pique-polo-black-m": 16,
+      "ck-interlock-polo-white-m": 16,
+      "owned-white-knit-2026": 16,
+      "cand-bluegray-tee": 16,
+      "cand-white-graphic-tee": 16,
+      "cand-thom-browne-shirt": 16,
+      "cand-white-tee": 12,
+      "cand-gray-tee": 12,
+      "jd-100020236036": 12
+    },
+    "temp": {
+      "cold": 12,
+      "cool": 20,
+      "hot": 26
+    },
+    "neutrals": [
+      "black",
+      "white",
+      "gray",
+      "navy",
+      "brown",
+      "beige"
+    ],
+    "default_temp": 24
+  },
+  "core_items": [
+    "printed-blue-outer-current",
+    "emporio-armani-3d1p68-ecru-altered",
+    "emporio-armani-6r1mf1-white-jacket",
+    "owned-white-knit-2026",
+    "owned-khaki-straight-2026",
+    "owned-lv-white-sneaker",
+    "owned-dior-club-m1u"
+  ],
+  "tryon_placeholder": "AI 上身预览需用户私下提供照片，不公开。公开页只保留说明位置，不放本人照片或根据本人照片生成的效果图。",
+  "counts": {
+    "total": 143,
+    "with_images": 142,
+    "wearable": 57,
+    "record": 45,
+    "retired": 40,
+    "womens": 1
+  },
+  "items": [
+    {
+      "id": "printed-blue-outer-current",
+      "name": "COACH 经典标志丹宁夹克",
+      "brand": "Coach",
+      "category": "outerwear",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/printed-blue-outer-current.webp",
+      "image_kind": "商家商品图（非官网）",
+      "note": "【已核实 2026-10-28】中等水洗。CAH16 为高置信候选款号，以内标为准。主图为商家图（女模展示）。关联京东购入。",
+      "retire_reason": ""
+    },
+    {
+      "id": "emporio-armani-3d1p68-ecru-altered",
+      "name": "EMPORIO ARMANI 米白撞色束脚休闲裤",
+      "brand": "Emporio Armani",
+      "category": "bottom",
+      "color": "beige",
+      "style": "sport",
+      "warmth": "medium",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/emporio-armani-3d1p68-ecru-altered.webp",
+      "image_kind": "商家商品图（非官网）",
+      "note": "【已核实 2026-10-28】款号 3D1P68-1JHSZ-0128，已外改；改后合身情况未知，不能按商品图推断合身。关联京东购入；标题色名“卡其 128”，以实物为准。",
+      "retire_reason": ""
+    },
+    {
+      "id": "emporio-armani-6r1mf1-white-jacket",
+      "name": "EMPORIO ARMANI 白色撞色高领拉链夹克",
+      "brand": "Emporio Armani",
+      "category": "outerwear",
+      "color": "white",
+      "style": "casual",
+      "warmth": "medium",
+      "status": "可穿",
+      "sources": [
+        "得物"
+      ],
+      "lookalike": false,
+      "image": "images/emporio-armani-6r1mf1-white-jacket.webp",
+      "image_kind": "商家商品图（非官网）",
+      "note": "【已核实 2026-10-28】款号 6R1MF1-1JHSZ-0128，2023秋冬，未改衣。得物上有疑似同一件的成交记录，未另入库。",
+      "retire_reason": ""
+    },
+    {
+      "id": "owned-white-knit-2026",
+      "name": "白色短袖针织开襟Polo（同款参考）",
+      "brand": "",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/owned-white-knit-2026.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "已确认仍在、可穿用。面料偏透，加内搭会热。主图为同款参考，非同一件（Jack & Jones 短袖针织开襟Polo商家棚拍，颜色与织法未核为同一件）。",
+      "retire_reason": ""
+    },
+    {
+      "id": "owned-khaki-straight-2026",
+      "name": "卡其直筒长裤",
+      "brand": "",
+      "category": "bottom",
+      "color": "beige",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/owned-khaki-straight-2026.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "已确认仍在、可穿用。购于韩国，韩国品牌。主图为同款参考，非同一件（ARKET/H&M 米色直筒休闲裤棚拍；已采集数据中无购物车记录，品牌未核）。裤脚堆积，历史建议改短；是否已改未知。",
+      "retire_reason": ""
+    },
+    {
+      "id": "owned-lv-white-sneaker",
+      "name": "LV Trainer 米白/米色（同款候选，内标待核）",
+      "brand": "Louis Vuitton",
+      "category": "shoes",
+      "color": "beige",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/owned-lv-white-sneaker.webp",
+      "image_kind": "同款候选，非已核同一件",
+      "note": "已确认仍在、可穿用。主图已改为商家商品图（同款候选，非已核同一件，来自转售经销商 REVERSIBLE，非LV官网，非已核为这一双）。型号为视觉高置信同款候选（LV Trainer 米色Monogram丹宁+同色麂皮），内标/货号未核。",
+      "retire_reason": ""
+    },
+    {
+      "id": "owned-dior-club-m1u",
+      "name": "DIOR CLUB M1U 一片式盾牌墨镜（蓝）",
+      "brand": "Dior",
+      "category": "accessory",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "得物"
+      ],
+      "lookalike": false,
+      "image": "images/owned-dior-club-m1u.webp",
+      "image_kind": "商家商品图",
+      "note": "已确认仍在、可穿用。得物交易成功，主图为 Fashion Eyewear 商家商品图（非Dior官网）。历史意见：镜框偏宽。色号 CD40042U 31B8 为高置信候选，以镜腿刻字为准。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-light-blue-hoodie",
+      "name": "始祖鸟 Arc'teryx 浅色连帽拉链外套（Squamish Sea Salt 同款参考，款号待核）",
+      "brand": "Arc'teryx",
+      "category": "outerwear",
+      "color": "blue",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-light-blue-hoodie.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】胸前有 Arc'teryx 鸟标。主图为同款参考，非同一件（Squamish Hoody Sea Salt 单品棚拍，无模特）。实物颜色略偏冰白，具体型号与配色未从内标确认。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-gray-tee",
+      "name": "浅灰圆领T恤",
+      "brand": "",
+      "category": "top",
+      "color": "gray",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-gray-tee.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】主图为同款参考，非同一件（优衣库 AIRism 浅灰圆领短袖棚拍）。胸前小标不清，品牌与款号未核。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-white-tee",
+      "name": "纯白圆领T恤（外套内搭）",
+      "brand": "",
+      "category": "top",
+      "color": "white",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-white-tee.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】外套内搭。主图为同款参考，非同一件（优衣库 AIRism 纯白圆领短袖棚拍）。品牌与款号未核。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-bluegray-tee",
+      "name": "Balenciaga 浅蓝/蓝灰色标识T恤（同款候选）",
+      "brand": "Balenciaga",
+      "category": "top",
+      "color": "blue",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-bluegray-tee.webp",
+      "image_kind": "同款候选，非已核同一件",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-white-graphic-tee",
+      "name": "ADLV acmé de la vie 白色短袖T恤（Basic Logo，同款候选）",
+      "brand": "ADLV",
+      "category": "top",
+      "color": "white",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-white-graphic-tee.webp",
+      "image_kind": "同款候选，非已核同一件",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-thom-browne-shirt",
+      "name": "Thom Browne 白色短袖衬衫（仅商品截图）",
+      "brand": "Thom Browne",
+      "category": "top",
+      "color": "white",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "其他"
+      ],
+      "lookalike": false,
+      "image": "images/cand-thom-browne-shirt.webp",
+      "image_kind": "商品截图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-ea-patch-jeans",
+      "name": "EA 贴布牛仔裤 6Z1J45-1D0ZZ",
+      "brand": "Emporio Armani",
+      "category": "bottom",
+      "color": "navy",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/cand-ea-patch-jeans.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-gray-sweatpants",
+      "name": "浅灰细褶阔腿裤（同款参考）",
+      "brand": "",
+      "category": "bottom",
+      "color": "gray",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-gray-sweatpants.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】已更正为浅灰细褶阔腿裤，不是运动裤。主图为同款参考，非同一件（The Webster 浅灰细褶裤棚拍，不能认定为 Homme Plissé 或同一条）。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-plaid-shorts",
+      "name": "EA7 Emporio Armani 印花短裤（同款参考）",
+      "brand": "EA7",
+      "category": "bottom",
+      "color": "other",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-plaid-shorts.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】已更正：左腿可见 EA7 EMPORIO ARMANI 鹰标。主图为同款参考，非同一件（Zalando EA7 满印字标短裤棚拍，印花与这件的文字/网格印花不同）。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-adidas-adizero",
+      "name": "Adidas Adizero Evo SL 浅灰银跑鞋",
+      "brand": "adidas",
+      "category": "shoes",
+      "color": "gray",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-adidas-adizero.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】购于新加坡。型号已由后跟 ADIZERO EVO SL 与中底 LIGHTSTRIKE PRO 确认。主图为同款参考，非同一件（adidas.com.sg 官方 JR3419 棚拍；参考图中底略偏金属银，与实物不完全一致，鞋舌内标货号未核）。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-snake-sneaker",
+      "name": "浅灰蛇纹运动鞋",
+      "brand": "",
+      "category": "shoes",
+      "color": "gray",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-snake-sneaker.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】主图为同款参考，非同一件（Renova Python Knit Sneaker 商家棚拍，偏棕金蛇纹，与这件浅灰蛇纹、奶油厚底系带款不完全一致，品牌与型号未核）。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-versace-navy-shoe",
+      "name": "Versace Jeans 深蓝皮鞋 E0GOBSE1",
+      "brand": "Versace Jeans",
+      "category": "shoes",
+      "color": "navy",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/cand-versace-navy-shoe.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-metal-aviator",
+      "name": "金属框飞行员墨镜",
+      "brand": "",
+      "category": "accessory",
+      "color": "other",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": false,
+      "image": null,
+      "image_kind": "暂无干净商品图",
+      "note": "已与衣橱中的古驰 GG0422S、GG0417SK 及光学镜比对，均不是同一副。暂无可用的商品主图。",
+      "retire_reason": ""
+    },
+    {
+      "id": "cand-black-watch",
+      "name": "黑色腕表",
+      "brand": "",
+      "category": "accessory",
+      "color": "black",
+      "style": "",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [],
+      "lookalike": true,
+      "image": "images/cand-black-watch.webp",
+      "image_kind": "同款参考，非同一件",
+      "note": "【已购可穿】品牌未识别。主图为同款参考，非同一件（Casio F-91W 零售商棚拍；实物为黑壳浅色表带，与该黑树脂表带不同，不能认定为Casio或同一只）。",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10096112900936",
+      "name": "Keep运动短袖T恤男士速干吸湿透气健身服篮球训练服运动上衣跑步服夏 静谧蓝",
+      "brand": "Keep",
+      "category": "top",
+      "color": "blue",
+      "style": "sport",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10096112900936.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10043762773400",
+      "name": "Keep运动短袖T恤男士速干吸湿透气健身服篮球训练服运动上衣跑步服夏 白色",
+      "brand": "Keep",
+      "category": "top",
+      "color": "white",
+      "style": "sport",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10043762773400.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10096351305311",
+      "name": "Keep跃动弹男子运动短裤吸湿速干透气宽松弹力跑步健身篮球四分短裤夏 白银灰",
+      "brand": "Keep",
+      "category": "bottom",
+      "color": "white",
+      "style": "sport",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10096351305311.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10070382021172",
+      "name": "adidas速干跑步运动上衣圆领短袖T恤男装阿迪达斯官方 酸性红/深银灰",
+      "brand": "adidas",
+      "category": "top",
+      "color": "gray",
+      "style": "sport",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10070382021172.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100020236036",
+      "name": "京东京造三代PLUS水柔棉白50s纯棉短袖t恤男圆领新疆棉升级款 白色",
+      "brand": "京东京造",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100020236036.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100033664576",
+      "name": "稻草人（MEXICAN）短袖t恤男宽松休闲潮流简约打底衫男上衣圆领透气男装0416灰色",
+      "brand": "稻草人",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100033664576.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100003300325",
+      "name": "VERSACE JEANS 范思哲 奢侈品 男士草绿色棉质字母图案做旧短袖T恤 B3GTB76B 36610 130",
+      "brand": "Versace Jeans",
+      "category": "top",
+      "color": "green",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100003300325.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年范思哲草绿字母T恤，现已不太常穿。"
+    },
+    {
+      "id": "jd-100005414696",
+      "name": "VERSACE JEANS 范思哲 奢侈品 男士灰色棉质字母图案做旧短袖T恤 B3GTB76B 36610 899",
+      "brand": "Versace Jeans",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100005414696.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年范思哲灰色字母T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-8999951",
+      "name": "EMPORIO ARMANI阿玛尼奢侈品男士圆领针织T恤衫 6Z1TP5-1JTUZ WHITE-F135",
+      "brand": "Emporio Armani",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-8999951.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-6909098",
+      "name": "ARMANI EXCHANGE阿玛尼奢侈品男士休闲裤(针织面料)3YZP83-ZJH6Z NAVY1510",
+      "brand": "Armani Exchange",
+      "category": "bottom",
+      "color": "navy",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-6909098.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年Armani Exchange休闲裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-8999953",
+      "name": "EMPORIO ARMANI阿玛尼奢侈品男士圆领针织T恤衫 6Z1TP5-1JTUZ WHITE-F135",
+      "brand": "Emporio Armani",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-8999953.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年阿玛尼白色针织T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-6475120",
+      "name": "ARMANI JEANS 阿玛尼奢侈品男士牛仔裤 3Y6J10-6D1AZ GREY0905",
+      "brand": "Armani Jeans",
+      "category": "bottom",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-6475120.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年Armani Jeans牛仔裤，相对现已不太常穿。"
+    },
+    {
+      "id": "jd-7387897",
+      "name": "ARMANI EXCHANGE阿玛尼奢侈品男士短袖针织T恤衫3ZZTBL-ZJA5Z WHITE-1100",
+      "brand": "Armani Exchange",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-7387897.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年Armani Exchange短袖针织T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-100003997510",
+      "name": "EMPORIO ARMANI UNDERWEAR阿玛尼奢侈品新款男士两件装舒适短袖T恤 111267-9P720 WHTNAY-17135",
+      "brand": "Emporio Armani",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100003997510.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年阿玛尼两件装T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-4769230",
+      "name": "VERSACE JEANS 范思哲 男士白色棉纤圆领短袖T恤 B3GPB7T6 36619 003",
+      "brand": "Versace Jeans",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-4769230.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年范思哲白色大印花T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-5048526",
+      "name": "VERSACE COLLECTION 范思哲 男士白色棉质小标半人脸短袖T恤 V800683 VJ00180 V9052",
+      "brand": "Versace",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-5048526.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-4629244",
+      "name": "VERSACE JEANS 范思哲 男士白色棉质圆领短袖T恤 B3GPB712 36590 003",
+      "brand": "Versace Jeans",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-4629244.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年范思哲白色花卉印花T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-5089208",
+      "name": "VERSACE COLLECTION 范思哲 男士灰色印花棉质美杜莎图案短袖T恤 V800683S VJ00301 V7652",
+      "brand": "Versace",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-5089208.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年范思哲灰色美杜莎大印花T恤，旧潮大图案，不太符合现在的风格。"
+    },
+    {
+      "id": "jd-11376332510",
+      "name": "Versace 范思哲男装 男士时尚休闲长袖圆领T恤 94473 白色",
+      "brand": "Versace",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-11376332510.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年范思哲白色印花长袖T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-11258248700",
+      "name": "Armani 阿玛尼 男士时尚休闲圆领长袖T恤 94024 灰色",
+      "brand": "Armani",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-11258248700.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年阿玛尼灰色长袖T恤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-1637706404",
+      "name": "Armani Jeans 阿玛尼牛仔 2015年新品男士纯棉印花休闲T恤 黑色",
+      "brand": "Armani Jeans",
+      "category": "top",
+      "color": "black",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1637706404.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2015年Armani Jeans印花T恤，过旧，现已不太常穿。"
+    },
+    {
+      "id": "jd-1567522303",
+      "name": "Armani Jeans 阿玛尼牛仔 男士简约休闲裤 蓝色",
+      "brand": "Armani Jeans",
+      "category": "bottom",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "light",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1567522303.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2015年Armani Jeans休闲裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "ck-pique-polo-black-m",
+      "name": "CALVIN KLEIN 经典 Pique 短袖 Polo 黑色",
+      "brand": "Calvin Klein",
+      "category": "top",
+      "color": "black",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "免税店"
+      ],
+      "lookalike": false,
+      "image": "images/ck-pique-polo-black-m.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "ck-interlock-polo-white-m",
+      "name": "CALVIN KLEIN Classic Interlock Polo 白色",
+      "brand": "Calvin Klein",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "light",
+      "status": "可穿",
+      "sources": [
+        "免税店"
+      ],
+      "lookalike": false,
+      "image": "images/ck-interlock-polo-white-m.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100039062203",
+      "name": "【内裤】Freego纯棉平角一次性内裤男灭菌免洗日抛旅行商务出差度假男灰平角",
+      "brand": "Freego",
+      "category": "bottom",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100039062203.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100326916498",
+      "name": "【内裤】蕉内银皮301P莫代尔男士内裤棉档10A抗菌无痕男生平角短裤冰丝透气3件",
+      "brand": "",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100326916498.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100061318579",
+      "name": "【内裤】猫人【A类一等品10A抑菌】男士内裤男医用纯棉特护级平角裤升级盒装",
+      "brand": "猫人",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100061318579.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100164441086",
+      "name": "Tommy Hilfiger26秋季新款男装经典商务弹力斜纹修身显瘦西裤休闲长裤 黑色",
+      "brand": "Tommy Hilfiger",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100164441086.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100046456345",
+      "name": "【泳装】Keep泳裤男防尴尬双层宽松游泳裤泳衣速干沙滩裤温泉装备",
+      "brand": "Keep",
+      "category": "bottom",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100046456345.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-1247408519",
+      "name": "【内衣/保暖内衣】恒源祥100%纯羊毛轻奢90S超密男女秋衣秋裤保暖内衣套装(高端礼盒装) BW-028深灰（男）",
+      "brand": "恒源祥",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1247408519.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100084850747",
+      "name": "【内裤】蕉内365S男士一次性内裤EO灭菌100%纯棉7A抗菌出差旅行日抛平角裤7条",
+      "brand": "",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100084850747.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10021250568314",
+      "name": "【内衣/保暖内衣】恒源祥羊毛内衣男100%纯羊毛薄款秋衣秋裤套装圆领保暖内衣套装 男款浅灰【礼盒装，100%羊毛，轻薄保暖】",
+      "brand": "恒源祥",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10021250568314.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100104126598",
+      "name": "【内裤】全棉时代一次性内裤男平角纯棉旅行便携商务出差免洗不掉絮灭菌 3条",
+      "brand": "全棉时代",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100104126598.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-4699497",
+      "name": "【内衣/保暖内衣】三枪秋衣秋裤男[原纱抗菌]全棉透气圆领保暖内衣抗静电厚棉毛衫套装",
+      "brand": "",
+      "category": "top",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-4699497.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100038995994",
+      "name": "【内裤】舒雅男士内裤80S莫代尔桑蚕丝3A抑菌平角裤【2条装】",
+      "brand": "",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100038995994.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100197114742",
+      "name": "【内裤】猫人【防阴囊潮湿】男士内裤男生冰丝透气10A抗菌高端轻奢平角短裤衩",
+      "brand": "猫人",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100197114742.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10072290053975",
+      "name": "adidas速干宽松舒适篮球运动短裤男装夏季阿迪达斯官方IC2453 金属灰/白",
+      "brand": "adidas",
+      "category": "bottom",
+      "color": "white",
+      "style": "sport",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10072290053975.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100037930214",
+      "name": "【内裤】京东京造【100%真丝裆礼盒装】80支兰精莫代尔男士内裤男夏季 组合二",
+      "brand": "京东京造",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100037930214.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100061186909",
+      "name": "【内裤】猫人（MiiOW）7A抑菌男士内裤男平角裤120支莫代尔丝滑亲肤四角短裤头3条",
+      "brand": "猫人",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100061186909.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100023562990",
+      "name": "【泳装】迪卡侬泳裤男平角专业训练短裤抗氯速干游泳装备经典蓝4230334",
+      "brand": "迪卡侬",
+      "category": "bottom",
+      "color": "blue",
+      "style": "sport",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100023562990.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100056830563",
+      "name": "【内裤】SooGree一次性内裤男士棉质便携舒适透气商务出差旅行度假户外独立包装",
+      "brand": "",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100056830563.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100022575147",
+      "name": "【内裤】舒雅男士内裤80S莫代尔桑蚕丝3A抑菌平角裤【2条装】",
+      "brand": "",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100022575147.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10037818407468",
+      "name": "【内衣/保暖内衣】HLA海澜之家男士山羊绒加厚保暖裤男修身棉裤打底裤加绒加厚德绒秋裤【护膝款】浅花灰",
+      "brand": "海澜之家",
+      "category": "bottom",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10037818407468.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100038778303",
+      "name": "JEEP SPIRIT吉普休闲裤男秋冬季韩版灯芯绒裤子男士商务男裤 深灰加绒",
+      "brand": "JEEP",
+      "category": "bottom",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100038778303.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100002994002",
+      "name": "【内裤】京东京造【长绒棉】新疆棉抗菌男士内裤男蚕蛹蛋白裆4条装组合一",
+      "brand": "京东京造",
+      "category": "bottom",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100002994002.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100020188286",
+      "name": "【内裤】全棉时代一次性内裤男士纯棉无菌旅行免洗不掉絮电子束灭菌 5条装",
+      "brand": "全棉时代",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100020188286.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100004332258",
+      "name": "【内裤】南极人男士内裤男平角裤中腰u凸男式短裤头四角男生内裤礼盒装",
+      "brand": "南极人",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100004332258.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100001362134",
+      "name": "EMPORIO ARMANI 阿玛尼奢侈品男士个性简约休闲牛仔裤 6Z1J45-1D0ZZ DENIM-0941",
+      "brand": "Emporio Armani",
+      "category": "bottom",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100001362134.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100004061578",
+      "name": "ARMANI EXCHANGE 阿玛尼奢侈品男士休闲裤 8NZP72-ZJQ2Z NAVY-3505",
+      "brand": "Armani Exchange",
+      "category": "bottom",
+      "color": "navy",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100004061578.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年Armani Exchange休闲裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-100002624117",
+      "name": "ARMANI EXCHANGE 阿玛尼奢侈品男士针织长裤 3YZP79-ZJD6Z NAVY0540",
+      "brand": "Armani Exchange",
+      "category": "bottom",
+      "color": "navy",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100002624117.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-14110752688",
+      "name": "安德玛官方 UA Launch 男子 7英寸印花运动短裤 Under Armour-1300057 黑色003",
+      "brand": "Under Armour",
+      "category": "bottom",
+      "color": "black",
+      "style": "sport",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-14110752688.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年Under Armour运动短裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-10100328231",
+      "name": "安德玛（Under Armour）HeatGear Armour男子训练运动短袖紧身衣1257468 灰色090",
+      "brand": "Under Armour",
+      "category": "top",
+      "color": "gray",
+      "style": "sport",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10100328231.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-12401747740",
+      "name": "Emporio Armani 阿玛尼EA7男裤 男士时尚休闲裤94810 黑色",
+      "brand": "Emporio Armani",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-12401747740.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年EA7休闲裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-10740587372",
+      "name": "VERSACE JEANS/VJ范思哲 男士长裤93901 黑色",
+      "brand": "Versace Jeans",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10740587372.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年范思哲长裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-4984620",
+      "name": "EMPORIO ARMANI EA7 阿玛尼 男士白色聚酯纤维鹰头字母图案休闲短裤 902000 7P747 44910",
+      "brand": "EA7",
+      "category": "bottom",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-4984620.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年EA7休闲短裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-1810964",
+      "name": "海澜之家 HKCAD3A200A 2015秋季新品男装微弹磨毛休闲长裤 中灰花纹",
+      "brand": "海澜之家",
+      "category": "bottom",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1810964.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2015年海澜之家休闲裤，购入过早，款式偏旧。"
+    },
+    {
+      "id": "jd-1265014940",
+      "name": "【内裤】Calvin Klein jeans 卡尔文·克莱恩 男士平角裤奢华生理内裤 多色可选 黑花色",
+      "brand": "Calvin Klein",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1265014940.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2015年CK内裤，过旧，现已不太常穿。"
+    },
+    {
+      "id": "jd-100102459012",
+      "name": "罗蒙（ROMON）夏季男士防晒衣男女冰丝防紫外线防晒服情侣夹克外套男 浅灰色",
+      "brand": "",
+      "category": "outerwear",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100102459012.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100043989956",
+      "name": "京东京造【高端100支】短袖衬衫男士衬衫商务正装春秋送爸爸礼物白色",
+      "brand": "京东京造",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100043989956.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100017812047",
+      "name": "HLA海澜之家长袖衬衫男微弹柔软顺滑透气白色正装衬衣男",
+      "brand": "海澜之家",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100017812047.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-6725178",
+      "name": "京东京造【高端商务系列】140支长绒棉DP3.5免烫商务休闲正装衬衫男白色",
+      "brand": "京东京造",
+      "category": "top",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-6725178.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100002842360",
+      "name": "京东京造【经典系列】衬衫男白衬衫长袖衬衫外套春秋男白色",
+      "brand": "京东京造",
+      "category": "outerwear",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100002842360.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-1234121836",
+      "name": "Calvin Klein jeans 卡尔文·克莱恩 CKJ 男士 撞色拼接格子短袖衬衫 灰色",
+      "brand": "Calvin Klein",
+      "category": "top",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1234121836.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2015年CK拼色格子短袖衬衫，过旧，现已不太常穿。"
+    },
+    {
+      "id": "jd-10159841672456",
+      "name": "耐克男子公路跑步鞋透气缓震支撑耐穿NIKE RUN SWIFT 3 DR2695 110白/金属银/足球灰/黑",
+      "brand": "Nike",
+      "category": "shoes",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10159841672456.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100103460930",
+      "name": "【居家拖鞋】三利拖鞋女夏室内家居浴室洗澡防滑eva情侣凉拖男 咖色",
+      "brand": "三利",
+      "category": "shoes",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100103460930.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100057261914",
+      "name": "骆驼（CAMEL）【王俊凯同款凯旋】徒步鞋男女防滑耐磨登山鞋户外透气爬山鞋子",
+      "brand": "",
+      "category": "shoes",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100057261914.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10108754102340",
+      "name": "【劳保工作鞋】卓力劳保鞋男防臭透气防砸防刺轻便夏季电工绝缘6KV工作安全鞋耐磨 A经典舒适-店长推荐6KV",
+      "brand": "卓力",
+      "category": "shoes",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10108754102340.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-7121783",
+      "name": "ARMANI EXCHANGE 阿玛尼奢侈品男士休闲鞋 955023-7P309 NAVY37735",
+      "brand": "Armani Exchange",
+      "category": "shoes",
+      "color": "navy",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-7121783.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-39406521801",
+      "name": "阿玛尼（ARMANI）男鞋时尚潮流EA7男士休闲鞋系带运动鞋礼物送男友节日礼物 混色",
+      "brand": "Armani",
+      "category": "shoes",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-39406521801.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-39406513000",
+      "name": "阿玛尼（ARMANI）男鞋时尚潮流EA7男士休闲鞋系带运动鞋礼物送男友节日礼物 混色",
+      "brand": "Armani",
+      "category": "shoes",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-39406513000.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年EA7休闲鞋，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "jd-6864119",
+      "name": "【居家拖鞋】南极人（Nanjiren）拖鞋女纯色浴室洗澡凉拖天蓝 19D021",
+      "brand": "南极人",
+      "category": "shoes",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-6864119.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-6714260",
+      "name": "【居家拖鞋】佳佰 自然系列 四季轻简家居舒适棉麻拖鞋男款 灰色L HM2044",
+      "brand": "",
+      "category": "shoes",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-6714260.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-12100021826",
+      "name": "KENZO高田贤三男鞋系带跑步鞋休闲运动鞋M42468 68 蓝色",
+      "brand": "Kenzo",
+      "category": "shoes",
+      "color": "blue",
+      "style": "sport",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-12100021826.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年KENZO休闲跑鞋，购入过早，中底易老化。"
+    },
+    {
+      "id": "jd-10035274011403",
+      "name": "古驰（GUCCI） 太阳镜墨镜 中性男女士百搭蛤蟆镜眼镜 棕色镜片金色镜框GG0422S 003",
+      "brand": "Gucci",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10035274011403.webp",
+      "image_kind": "订单商品图",
+      "note": "已确认金色细框墨镜即此件 GUCCI GG0422S 003，并与候选记录合并。主图为京东订单商品图。",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-10035274034376",
+      "name": "古驰（GUCCI）开云眼镜太阳眼镜男女同款高级黑色方框防晒遮阳墨镜礼物 黑色镜框灰色镜片GG0417SK-001",
+      "brand": "Gucci",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10035274034376.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-6130358",
+      "name": "GUCCI 古驰 eyewear 近视眼镜 男款光学眼镜框 经典方形金属半框镜架 GG0130O-001 黑色镜框 53mm",
+      "brand": "Gucci",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-6130358.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-4427481",
+      "name": "GUCCI 古驰 eyewear 近视眼镜 男款光学眼镜框 经典方形金属半框镜架 GG0130O-002 棕色镜框 53mm",
+      "brand": "Gucci",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-4427481.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-3696153",
+      "name": "VERSACE COLLECTION 范思哲 男士湖蓝色皮质镂空半人脸扳扣式腰带 V910207 VM00219 V185N",
+      "brand": "Versace",
+      "category": "accessory",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-3696153.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年范思哲湖蓝色镂空半人脸腰带，风格偏夸张，现已不太用。"
+    },
+    {
+      "id": "jd-10084366704962",
+      "name": "目丸帽子男士滑雪帽户外护耳防风雷锋帽男冬季棉帽保暖飞行员防寒骑车 1#灰色-骑车厚保暖帽",
+      "brand": "",
+      "category": "accessory",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-10084366704962.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-11636098301",
+      "name": "吴亦凡同款帽子男秋冬夏天韩版字母学生潮棒球帽时尚百搭鸭舌帽遮阳帽 黑色 可调节",
+      "brand": "",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-11636098301.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年“吴亦凡同款”潮棒球帽，过时网红款。"
+    },
+    {
+      "id": "jd-100190696373",
+      "name": "蕉下男士袜子短袜抗菌防臭棉质耐磨运动吸汗透气男袜四季秋冬舒适新款",
+      "brand": "",
+      "category": "accessory",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100190696373.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100277845230",
+      "name": "蕉下男士袜子中筒袜抗菌防臭棉质耐磨吸汗透气运动男袜秋冬 GP119",
+      "brand": "",
+      "category": "accessory",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100277845230.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100216336107",
+      "name": "猫人93%羊毛袜子男秋冬保暖中筒加绒加厚毛圈睡眠地板美利奴羊绒长袜",
+      "brand": "猫人",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100216336107.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100164681084",
+      "name": "梦特娇袜子男士夏季纯棉艾草精油袜7A抗菌防臭船袜休闲运动吸汗透气短袜",
+      "brand": "",
+      "category": "accessory",
+      "color": "other",
+      "style": "sport",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100164681084.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100112487684",
+      "name": "猫人男士袜子男士纯棉抗菌防臭秋冬中筒袜子男款26年新款耐磨棉袜6双",
+      "brand": "猫人",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100112487684.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-7943666",
+      "name": "南极人10双新疆棉袜男士袜子秋冬季10A抗菌防臭纯色棉袜舒适男袜中筒袜",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-7943666.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100091916000",
+      "name": "猫人6双100%纯棉男士袜子男夏季薄款10A抗菌防臭耐磨船袜男商务短袜男",
+      "brand": "猫人",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100091916000.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100032704820",
+      "name": "南极人任意裁男士袜子男棉底吸汗透气无痕夏季隐形袜透气冰丝防滑船袜男",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100032704820.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-3663574",
+      "name": "南极人袜子男士袜子短袜男春夏季10A抗菌防臭10双棉袜男袜低帮船袜男",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-3663574.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-100021432455",
+      "name": "京东京造【10A抗菌】新疆棉男士袜子男春秋防臭透气吸汗短袜简约色5双",
+      "brand": "京东京造",
+      "category": "accessory",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-100021432455.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "jd-1577431",
+      "name": "卡帝乐鳄鱼（CARTELO）袜子男 刺绣纯色棉质吸汗透气商务正装中筒袜男士5双混色礼盒装 纯黑",
+      "brand": "",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "京东"
+      ],
+      "lookalike": false,
+      "image": "images/jd-1577431.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2015年卡帝乐鳄鱼袜子，购入过早，多半已经耗尽。"
+    },
+    {
+      "id": "tb-2023-03-25-nanjiren-socks",
+      "name": "【袜】南极人男士短袜中筒/船袜 5黑5白",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2023-03-25-nanjiren-socks.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2017-08-03-adidas-ultraboost-uncaged-ba9616",
+      "name": "Adidas UltraBoost Uncaged 白噪音 BA9616",
+      "brand": "adidas",
+      "category": "shoes",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2017-08-03-adidas-ultraboost-uncaged-ba9616.webp",
+      "image_kind": "商家商品图（非官网）",
+      "note": "",
+      "retire_reason": "2017年Adidas UltraBoost跑鞋，中底易老化，不宜再常穿。"
+    },
+    {
+      "id": "tb-2019-11-10-bosideng-down-8003",
+      "name": "波司登鹅绒中长款羽绒服 糙白8003",
+      "brand": "波司登",
+      "category": "outerwear",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-10-bosideng-down-8003.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-11-11-hit-the-collection-coat",
+      "name": "hit the collection 渐变激光雕皮草加厚中长款棉服外套 黑色",
+      "brand": "",
+      "category": "outerwear",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-11-hit-the-collection-coat.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年潮牌渐变激光雕皮草棉服，风格偏夸张，不太得体。"
+    },
+    {
+      "id": "tb-2019-11-14-panda-fleece-joggers",
+      "name": "熊猫印花加绒运动卫裤 烫金熊猫（加绒）",
+      "brand": "",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-14-panda-fleece-joggers.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年熊猫印花加绒卫裤，卡通潮牌风格，现已不太穿。"
+    },
+    {
+      "id": "tb-2019-06-17-diesel-p-yatri-00sqvs",
+      "name": "Diesel P-YATRI 休闲长裤 00SQVS 0JASY 黑色900",
+      "brand": "",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-17-diesel-p-yatri-00sqvs.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-06-17-ea-3z1j45-1n1zz",
+      "name": "EMPORIO ARMANI 休闲长裤 3Z1J45 1N1ZZ 黑色999",
+      "brand": "Emporio Armani",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-17-ea-3z1j45-1n1zz.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-06-01-ea-6z1j06-1d0wz",
+      "name": "EMPORIO ARMANI 修身牛仔裤 6Z1J06 1D0WZ 黑色5",
+      "brand": "Emporio Armani",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-01-ea-6z1j06-1d0wz.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-06-01-ea7-3gps57-pja5z",
+      "name": "EA7 休闲短裤 3GPS57 PJA5Z 深蓝2502",
+      "brand": "EA7",
+      "category": "bottom",
+      "color": "navy",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-01-ea7-3gps57-pja5z.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年EA7休闲短裤，合身度不太适合现在穿着。"
+    },
+    {
+      "id": "tb-2019-11-11-ash-fargo",
+      "name": "ASH FARGO 增高老爹鞋 黑色",
+      "brand": "ASH",
+      "category": "shoes",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-11-ash-fargo.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年ASH增高老爹鞋，款式偏旧潮，现已不太常穿。"
+    },
+    {
+      "id": "tb-2022-12-05-fleece-socks",
+      "name": "【袜】加绒毛圈船袜 4黑3白",
+      "brand": "",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2022-12-05-fleece-socks.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2022-11-02-home-slippers",
+      "name": "【拖鞋】情侣防滑家居拖鞋 灰面+白底",
+      "brand": "",
+      "category": "shoes",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2022-11-02-home-slippers.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2021-11-01-beijirong-thermal-set",
+      "name": "【保暖内衣】北极绒加绒秋衣秋裤套装 牛仔蓝+中灰",
+      "brand": "北极绒",
+      "category": "bottom",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2021-11-01-beijirong-thermal-set.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2021-07-14-yeezy-socks",
+      "name": "【袜】yeezy潮牌船袜4双礼盒 6号组合",
+      "brand": "Yeezy",
+      "category": "accessory",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2021-07-14-yeezy-socks.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2020-09-02-maoren-boxers",
+      "name": "【内裤】猫人抗菌无痕四角裤 浅蓝+浅灰+深灰",
+      "brand": "猫人",
+      "category": "bottom",
+      "color": "blue",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2020-09-02-maoren-boxers.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2020-02-05-polisi-goggles",
+      "name": "【劳保护目镜】POLISI 防护眼镜 白色（高清防雾）",
+      "brand": "",
+      "category": "accessory",
+      "color": "white",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2020-02-05-polisi-goggles.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-11-11-nanjiren-socks-10",
+      "name": "【袜】南极人纯棉中筒袜10双 混色",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-11-nanjiren-socks-10.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-11-11-fawn-sweater",
+      "name": "ins港风小鹿图案加绒毛衣 杏色加绒",
+      "brand": "",
+      "category": "top",
+      "color": "beige",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-11-fawn-sweater.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年港风小鹿加绒毛衣，卡通图案不太符合现在的风格。"
+    },
+    {
+      "id": "tb-2019-06-18-ea-111267-cc715",
+      "name": "EMPORIO ARMANI 鹰标修身短袖T恤 111267 CC715 黑色7320",
+      "brand": "Emporio Armani",
+      "category": "top",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-18-ea-111267-cc715.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-06-17-adidas-cg3413",
+      "name": "【凉拖】adidas 沙滩凉拖 CG3413 1号黑色/纸板黄",
+      "brand": "adidas",
+      "category": "shoes",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-17-adidas-cg3413.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-06-01-champion-212805-m",
+      "name": "CHAMPION 修身休闲裤 212805 黑色KL001",
+      "brand": "Champion",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-01-champion-212805-m.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2019年Champion修身休闲裤，偏旧且修身，现已不太常穿。"
+    },
+    {
+      "id": "tb-2019-06-01-versace-b3gtb72f",
+      "name": "VERSACE JEANS 印花短袖T恤 B3GTB72F 36609 黑色899",
+      "brand": "Versace Jeans",
+      "category": "top",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "可穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-06-01-versace-b3gtb72f.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-05-24-no-show-socks",
+      "name": "【袜】纯棉硅胶防滑隐形船袜6双 2黑2白2灰",
+      "brand": "",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-05-24-no-show-socks.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2019-04-19-nanjiren-boxers",
+      "name": "【内裤】南极人纯棉平角裤 经典纯色",
+      "brand": "南极人",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已购·仅记录",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-04-19-nanjiren-boxers.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    },
+    {
+      "id": "tb-2018-04-07-nanjiren-icesilk-boxers",
+      "name": "【内裤】南极人冰丝平角裤4条盒装 LM23681",
+      "brand": "南极人",
+      "category": "bottom",
+      "color": "gray",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2018-04-07-nanjiren-icesilk-boxers.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2018年南极人冰丝内裤，购入过早，多半已经不再使用。"
+    },
+    {
+      "id": "tb-2018-04-07-nanjiren-socks-10",
+      "name": "【袜】南极人短袜/船袜 黑色10双",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2018-04-07-nanjiren-socks-10.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2018年南极人船袜10双，购入过早，多半已经耗尽。"
+    },
+    {
+      "id": "tb-2018-03-22-hoz-high-top",
+      "name": "HOZ后街 英伦高帮牛仔布鞋（内增高） 黑色",
+      "brand": "HOZ",
+      "category": "shoes",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2018-03-22-hoz-high-top.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2018年HOZ内增高高帮布鞋，与现在的着装风格不符。"
+    },
+    {
+      "id": "tb-2017-05-30-nanjiren-socks-20",
+      "name": "【袜】南极人长短袜 混色+黑色 共20双",
+      "brand": "南极人",
+      "category": "accessory",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2017-05-30-nanjiren-socks-20.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年南极人袜子20双，购入过早，多半已经耗尽。"
+    },
+    {
+      "id": "tb-2017-02-24-harem-pants-ak22",
+      "name": "韩版束脚哈伦裤 黑色AK22字母边拉链",
+      "brand": "",
+      "category": "bottom",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2017-02-24-harem-pants-ak22.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年韩版字母哈伦裤，早期潮牌风格，不太符合现在的得体穿着。"
+    },
+    {
+      "id": "tb-2017-02-24-inner-height-sneakers",
+      "name": "韩版内增高8cm休闲板鞋 黑白",
+      "brand": "",
+      "category": "shoes",
+      "color": "black",
+      "style": "casual",
+      "warmth": "",
+      "status": "已淘汰/不常穿",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2017-02-24-inner-height-sneakers.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": "2017年韩版内增高8cm板鞋，与现在的着装风格不符。"
+    },
+    {
+      "id": "tb-2019-11-11-nike-ci8938-womens",
+      "name": "【女款·穿用人待核】Nike 女款大勾羊羔绒双面穿夹克 CI8938 裸粉897 / 黑白010",
+      "brand": "Nike",
+      "category": "outerwear",
+      "color": "other",
+      "style": "casual",
+      "warmth": "",
+      "status": "女款待核",
+      "sources": [
+        "淘宝"
+      ],
+      "lookalike": false,
+      "image": "images/tb-2019-11-11-nike-ci8938-womens.webp",
+      "image_kind": "订单商品图",
+      "note": "",
+      "retire_reason": ""
+    }
+  ],
+  "sources_note": "来源只标明购买平台（京东、淘宝、得物、免税店等）。不是这些平台的全历史。",
+  "disclaimer": "本页是个人衣橱整理和搭配参考，不能代替试穿。同款参考图不能当成已经核对过的同一件。",
+  "privacy": "本页不含个人照片、姓名、电话、地址、身高体重、服装或鞋的尺码、订单号，也不含病情相关信息。",
+  "links": {
+    "repo": "https://github.com/Itachi0819-a/wardrobe",
+    "pages": "https://itachi0819-a.github.io/wardrobe/",
+    "raw": "https://raw.githubusercontent.com/Itachi0819-a/wardrobe/main/data.json",
+    "ai_instructions": "https://raw.githubusercontent.com/Itachi0819-a/wardrobe/main/AI_INSTRUCTIONS.md"
+  }
+}
