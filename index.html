@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f4efe6">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="公开衣橱小程序：单品、搭配和同款说明。全部数据在 data.json，可供其他 AI 读取和继续整理。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; object-src 'none'; form-action 'none'">
   <title>我的衣橱</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,6 +14,8 @@
   <div id="app">
     <p class="boot">正在加载衣橱…</p>
   </div>
+  <script src="logic.js" defer></script>
   <script src="app.js" defer></script>
+  <noscript><p class="error">需要启用 JavaScript 才能查看这份衣橱。</p></noscript>
 </body>
 </html>
