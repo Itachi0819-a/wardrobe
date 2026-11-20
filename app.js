@@ -137,8 +137,14 @@
     return found ? found.tone : "neutral";
   }
 
+  function displaySrc(item) {
+    if (!item) return null;
+    if (item.image_scope === "local-remote" || item.image_scope === "local-data") return Logic.localImageSrc(item.image);
+    return Logic.safeImage(item.image);
+  }
+
   function thumb(item, large) {
-    var src = Logic.safeImage(item.image);
+    var src = displaySrc(item);
     var kind = item.image_kind ? "（" + esc(item.image_kind) + "）" : "";
     if (!src) return '<div class="' + (large ? "big " : "thumb ") + 'thumb-empty">暂无商品图' + kind + "</div>";
     var cls = large ? "big" : "thumb";
@@ -150,6 +156,10 @@
     if (item.lookalike) {
       var kind = item.image_kind && item.image_kind.indexOf("同款") !== -1 ? item.image_kind : "同款候选，非已核同一件";
       bits.push('<span class="badge warning">' + esc(kind) + "</span>");
+    }
+    if (item.status === "可穿") {
+      var evidence = Logic.ownershipEvidence(state.data, item);
+      bits.push(evidence.proven ? '<span class="badge success">已确认仍保留</span>' : '<span class="badge warning">需核对</span>');
     }
     if (item.low_priority && item.status === "可穿") bits.push('<span class="badge neutral">可穿·不优先</span>');
     if (item.status === "已购·仅记录") bits.push('<span class="badge neutral">不参与搭配</span>');
@@ -184,7 +194,16 @@
       lines.push("这件只在本机导入的数据里，不在公开清单中。");
     }
     if (isBlocked(item)) lines.push("名称里有乐福或深咖，即使标成可穿也不会进入搭配。");
+    var evidence = Logic.ownershipEvidence(state.data, item);
+    if (item.status === "可穿" || item._retainLocal) lines.push(evidence.reason);
     var actions = "";
+    if (item.status === "可穿" && item._retainLocal === "yes") {
+      actions += '<button type="button" class="quiet" data-retain="clear" data-id="' + esc(item.id) + '">撤销本机保留确认</button>';
+    } else if (item.status === "可穿" && evidence.proven) {
+      actions += '<button type="button" class="quiet" data-retain="no" data-id="' + esc(item.id) + '">仅在本机撤销这条保留确认</button>';
+    } else if (item.status === "可穿") {
+      actions += '<button type="button" class="quiet" data-retain="yes" data-id="' + esc(item.id) + '">仅在本机确认现在仍保留、可穿</button>';
+    }
     if (item.status === "可穿") {
       actions += '<button type="button" class="quiet" data-local-status="已淘汰/不常穿" data-id="' + esc(item.id) + '">仅在本机标为已淘汰</button>';
     } else if (item.status === "已淘汰/不常穿") {
@@ -218,7 +237,7 @@
 
   function outfitView(outfit) {
     var pieces = outfit.items.map(function (item) {
-      var src = Logic.safeImage(item.image);
+      var src = displaySrc(item);
       var media = src
         ? '<img src="' + esc(src) + '" alt="' + esc(item.name) + "，" + esc(item.image_kind || "") + '" loading="lazy" decoding="async">'
         : '<div class="thumb-empty">' + esc(item.image_kind || "暂无商品图") + "</div>";
@@ -229,7 +248,9 @@
     var reasons = (outfit.reasons || []).map(function (reason) { return "<li>" + esc(reason) + "</li>"; }).join("");
     var warnings = (outfit.warnings || []).map(function (warning) { return '<p class="warn">' + esc(warning) + "</p>"; }).join("");
     return '<article class="outfit"><h3>' + esc(outfit.title) + "</h3>" +
-      '<p class="caption">' + (outfit.role === "primary" ? "这一套是当前条件下更可执行的组合。" : "这是另一套不同上衣或连衣裙，用来替换，不是试穿过的第二名。") + "</p>" +
+      '<p class="caption">' + (outfit.warmthJudged
+        ? (outfit.role === "primary" ? "这套的衣服都有保留证据，并且过了所填气温的厚薄门槛。" : "另一套同样过了保留证据和厚薄门槛。")
+        : "温度未知，只列出已确认仍保留的单品，不作保暖判断。") + "</p>" +
       '<div class="outfit-row">' + pieces +
       '<div class="tryon-slot"><div class="box">不能生成上身图，也不是模拟。</div><div class="name">没有上身预览</div></div></div>' +
       '<ul class="reasons">' + reasons + "</ul>" + warnings + "</article>";
@@ -249,7 +270,11 @@
       "<li>导入文件里状态不同的有 " + preview.statusChanges.length + " 件。只有点下面第二个按钮才会改本机状态。</li>" +
       "<li>文件里没有、但仍会保留的现有单品：" + preview.keptDespiteOmission + " 件。</li>" +
       "<li>拒绝 " + preview.rejected.length + " 条" + (preview.rejected.length ? "：" + esc(names(preview.rejected)) : "") + "。</li>" +
-      "<li>丢弃的外链或不明图片：" + preview.imageDropped + " 处。没有拿别的图补上。</li>" +
+      "<li>图片未采用 " + preview.imageDropped + " 处。外链或上传图如果留下，会写明只在本机。</li>" +
+      ((preview.notices || []).slice(0, 8).map(function (notice) {
+        return "<li>" + esc((notice.id ? notice.id + "：" : "") + (notice.action || "") + " " + (notice.reason || "")) + "</li>";
+      }).join("")) +
+      ((preview.notices || []).length > 8 ? "<li>还有 " + ((preview.notices || []).length - 8) + " 条处理说明，没有省略原因，只是这里不全部展开。</li>" : "") +
       "</ul>" +
       '<div class="row-actions">' +
       '<button type="button" class="primary" data-action="apply-import" data-mode="safe">合并：只补新单品和空字段</button>' +
@@ -279,10 +304,13 @@
     var gridItems = Logic.filterItems(data, state.items, {
       query: state.query,
       category: state.cat,
-      statusFilter: state.statusFilter,
+      statusFilter: state.statusFilter === "review" ? "wearable" : state.statusFilter,
       source: state.source,
       culledOnly: false
     });
+    if (state.statusFilter === "review") {
+      gridItems = gridItems.filter(function (item) { return !Logic.ownershipEvidence(data, item).proven; });
+    }
     var culledItems = Logic.filterItems(data, state.items, {
       query: state.query,
       category: state.cat,
@@ -305,6 +333,7 @@
     }).join("");
     var statusChips = [
       ["wearable", "可穿"],
+      ["review", "需核对"],
       ["record", "已购·仅记录"],
       ["womens", "女款待核"],
       ["all", "全部（不含已淘汰）"]
@@ -334,13 +363,14 @@
         var held = (suggestion.heldBack || []).map(function (entry) {
           return '<li><button type="button" class="text-button" data-held="' + esc(entry.id) + '">' + esc(entry.name) + "</button>：" + esc(entry.reason) + "</li>";
         }).join("");
-        resultHtml = '<div id="results" aria-live="polite"><div class="callout info"><ul>' + notes + "</ul></div>" +
-          suggestion.outfits.map(outfitView).join("") +
+        var gapHtml = (suggestion.gaps || []).map(function (line) { return "<li>" + esc(line) + "</li>"; }).join("");
+        resultHtml = '<div id="results" aria-live="polite"><div class="callout ' + (suggestion.outfits.length ? "info" : "warning") + '"><ul>' + notes + gapHtml + "</ul></div>" +
+          (suggestion.outfits.length ? suggestion.outfits.map(outfitView).join("") : '<p class="warn">没有拼成一套。缺的单品不会用购买记录或款号核实来顶上。</p>') +
           (held ? '<div class="callout warning"><p class="lead">这些可穿记录没有自动搭配</p><ul>' + held + "</ul></div>" : "") +
           "</div>";
       }
       panel = '<section class="block" id="panel" role="tabpanel" aria-labelledby="tab-suggest"><h2>按场合生成搭配</h2>' +
-        '<p class="caption">只用允许搭配、且名称或备注里没有乐福、深咖的单品。已购仅记录、已淘汰、女款不进入。不优先单品只在该类别没有其他可穿选择时使用。棕色和卡其不会因为「不太喜欢深咖」被排除。</p>' +
+        '<p class="caption">自动搭配只使用备注写明「已确认仍在、可穿用」，或你在本机确认过的单品。状态为可穿本身不算已经证实。没有填写气温时不作保暖判断。气温过不了厚薄门槛，或没有足够的已确认单品，就明确说证据不足，不硬拼。</p>' +
         '<div class="controls-row"><label for="occasion">场合 <select id="occasion">' + occasionOptions + "</select></label>" +
         '<label for="temp">气温（℃，可空） <input id="temp" type="number" inputmode="decimal" placeholder="不猜测" value="' + esc(state.tempText) + '"></label>' +
         '<label class="check" for="with-accessory"><input id="with-accessory" type="checkbox"' + (state.withAccessory ? " checked" : "") + "> 加入一件配饰</label>" +
@@ -411,6 +441,18 @@
     restore(snap);
   }
 
+  function setRetain(id, value) {
+    if (!state.local.overrides[id]) state.local.overrides[id] = {};
+    if (value === "clear") delete state.local.overrides[id].retain;
+    else state.local.overrides[id].retain = value;
+    if (!state.local.overrides[id].status && !state.local.overrides[id].retain && !state.local.overrides[id].fill && !state.local.overrides[id].localImage) {
+      delete state.local.overrides[id];
+    }
+    persist();
+    recompute();
+    render();
+  }
+
   function setStatus(id, status) {
     var pub = publicItem(id);
     if (pub) {
@@ -475,6 +517,10 @@
     }
     if (target.hasAttribute("data-local-status")) {
       setStatus(target.getAttribute("data-id"), target.getAttribute("data-local-status"));
+      return;
+    }
+    if (target.hasAttribute("data-retain")) {
+      setRetain(target.getAttribute("data-id"), target.getAttribute("data-retain"));
       return;
     }
     var action = target.getAttribute("data-action");
@@ -622,7 +668,7 @@
       var cleaned = [];
       var dropped = 0;
       (state.local.extraItems || []).forEach(function (raw) {
-        var result = Logic.sanitizeItem(data, raw);
+        var result = Logic.sanitizeItem(data, raw, { scope: "local" });
         if (result.ok) cleaned.push(result.item);
         else dropped += 1;
       });

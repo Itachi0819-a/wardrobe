@@ -63,8 +63,15 @@ test("outfits stay inside wearable, non-loafer, non-deep-coffee clothes", () => 
   occasions.forEach((occasion) => {
     temps.forEach((tempText) => {
       const result = Logic.recommendOutfits(data, data.items, { occasion, tempText, withAccessory: false });
-      assert.ok(result.outfits.length >= 1 && result.outfits.length <= 2, occasion + " " + tempText);
-      assert.equal(result.outfits[0].role, "primary");
+      assert.ok(result.outfits.length <= 2, occasion + " " + tempText);
+      result.outfits.forEach((outfit) => {
+        outfit.items.forEach((entry) => assert.equal(Logic.ownershipEvidence(data, entry).proven, true));
+      });
+      if (tempText === "5") {
+        assert.equal(result.outfits.length, 0, occasion);
+        assert.match(result.general.join("\n"), /证据不足/);
+      }
+      if (result.outfits[0]) assert.equal(result.outfits[0].role, "primary");
       if (result.outfits[1]) {
         assert.equal(result.outfits[1].role, "backup");
         const primaryTop = result.outfits[0].items.find((entry) => entry.category === "top" || entry.category === "dress");
@@ -93,79 +100,62 @@ test("outfits stay inside wearable, non-loafer, non-deep-coffee clothes", () => 
   });
 });
 
-test("occasion and temperature constraints stay specific", () => {
-  const formal = Logic.recommendOutfits(data, data.items, { occasion: "formal", tempText: "" }).outfits[0];
-  const formalTop = formal.items.find((entry) => entry.category === "top");
-  const formalShoes = formal.items.find((entry) => entry.category === "shoes");
-  assert.match(formalTop.name, /长袖/);
-  assert.match(formalTop.name, /衬衫/);
-  assert.equal(/跑步鞋|跑鞋|Adizero|徒步|短裤|Keep/.test(formal.items.map((entry) => entry.name).join(" ")), false);
-  if (formalShoes) assert.equal(/跑步鞋|跑鞋|Adizero|徒步/.test(formalShoes.name), false);
+test("unknown temperature does not judge warmth, and cold work is not assembled", () => {
+  const daily = Logic.recommendOutfits(data, data.items, { occasion: "daily", tempText: "" });
+  assert.equal(daily.warmthJudged, false);
+  assert.match(daily.general.join("\n"), /温度未知/);
+  assert.match(daily.general.join("\n"), /不作保暖判断/);
+  assert.equal(daily.outfits.length, 1);
+  assert.equal(daily.outfits[0].title, "已确认单品组合");
+  assert.deepEqual(daily.outfits[0].items.map((entry) => entry.id), ["owned-white-knit-2026", "owned-khaki-straight-2026", "owned-lv-white-sneaker"]);
+  assert.equal(daily.outfits[0].items.some((entry) => entry.category === "outerwear"), false);
 
-  const sport = Logic.recommendOutfits(data, data.items, { occasion: "sport", tempText: "" }).outfits[0];
-  const sportTop = sport.items.find((entry) => entry.category === "top");
-  const sportShoes = sport.items.find((entry) => entry.category === "shoes");
-  assert.match(sportTop.name, /运动|速干/);
-  assert.equal(/紧身|正装|皮鞋/.test(sportTop.name), false);
-  assert.equal(sport.items.some((entry) => entry.id === ADIDAS_SHORTS), false);
-  if (sportShoes) assert.equal(/皮鞋/.test(sportShoes.name), false);
+  const coldWork = Logic.recommendOutfits(data, data.items, { occasion: "work", tempText: "5" });
+  assert.equal(coldWork.outfits.length, 0);
+  assert.match(coldWork.general.join("\n"), /证据不足/);
+  assert.match(coldWork.gaps.join("\n"), /短袖不能靠外层羽绒/);
+  assert.equal(JSON.stringify(coldWork.outfits).includes("波司登"), false);
+  assert.equal(JSON.stringify(coldWork.outfits).includes("owned-white-knit-2026"), false);
 
-  const work = Logic.recommendOutfits(data, data.items, { occasion: "work", tempText: "" }).outfits[0];
-  assert.equal(work.items.some((entry) => /正装|皮鞋|羽绒/.test(entry.name)), false);
-  assert.equal(work.items.some((entry) => entry.category === "outerwear"), false);
-
-  const daily = Logic.recommendOutfits(data, data.items, { occasion: "daily", tempText: "" }).outfits[0];
-  assert.equal(daily.items.find((entry) => entry.category === "top").id, "owned-white-knit-2026");
-  assert.equal(daily.items.find((entry) => entry.category === "bottom").id, "owned-khaki-straight-2026");
-  assert.equal(daily.items.find((entry) => entry.category === "shoes").id, "owned-lv-white-sneaker");
-
-  const cold = Logic.recommendOutfits(data, data.items, { occasion: "daily", tempText: "5" }).outfits[0];
-  assert.equal(cold.items.some((entry) => entry.category === "outerwear" && /羽绒/.test(entry.name)), true);
-  assert.equal(cold.items.some((entry) => entry.category === "bottom" && /短裤/.test(entry.name)), false);
-  assert.equal(cold.items.some((entry) => /防晒衣|防晒服/.test(entry.name)), false);
-  ["work", "formal"].forEach((occasion) => {
-    const coldOutfit = Logic.recommendOutfits(data, data.items, { occasion, tempText: "5" }).outfits[0];
-    assert.equal(coldOutfit.items.some((entry) => entry.category === "outerwear" && /羽绒/.test(entry.name)), true, occasion);
+  ["formal", "sport"].forEach((occasion) => {
+    const result = Logic.recommendOutfits(data, data.items, { occasion, tempText: "" });
+    assert.equal(result.outfits.length, 0, occasion);
+    assert.match(result.general.join("\n"), /证据不足/);
   });
-  const coldSport = Logic.recommendOutfits(data, data.items, { occasion: "sport", tempText: "5" }).outfits[0];
-  assert.equal(/紧身/.test(coldSport.items.find((entry) => entry.category === "top").name), false);
-  assert.match(cold.warnings.join(" "), /推测/);
-
-  const mild = Logic.recommendOutfits(data, data.items, { occasion: "daily", tempText: "" });
-  assert.match(mild.general.join(" "), /没有填写气温/);
-  assert.match(mild.general.join(" "), /没有上身试穿/);
-  assert.equal(mild.outfits[0].items.some((entry) => entry.category === "outerwear"), false);
 });
 
 test("low priority, loafers, deep coffee, and accessory safety use fixtures", () => {
+  const kept = "已确认仍在、可穿用。";
   const onlyShorts = [
-    item({ id: "tee", name: "运动T恤", category: "top", style: "sport" }),
-    item({ id: "adidas", name: "adidas IC2453 运动短裤", category: "bottom", low_priority: true }),
-    item({ id: "shoe", name: "跑鞋", category: "shoes", style: "sport" })
+    item({ id: "tee", name: "运动T恤", category: "top", style: "sport", note: kept }),
+    item({ id: "adidas", name: "adidas IC2453 运动短裤", category: "bottom", low_priority: true, note: kept }),
+    item({ id: "shoe", name: "跑鞋", category: "shoes", style: "sport", note: kept })
   ];
   const forced = Logic.recommendOutfits(data, onlyShorts, { occasion: "sport", tempText: "28" });
   assert.equal(forced.outfits[0].items.some((entry) => entry.id === "adidas"), true);
   assert.match(forced.outfits[0].warnings.join(" "), /不优先/);
 
-  const withChoice = onlyShorts.concat([item({ id: "pant", name: "运动长裤", category: "bottom", style: "sport" })]);
+  const withChoice = onlyShorts.concat([item({ id: "pant", name: "运动长裤", category: "bottom", style: "sport", note: kept })]);
   const avoided = Logic.recommendOutfits(data, withChoice, { occasion: "sport", tempText: "28" });
   assert.equal(outfitItems(avoided).some((entry) => entry.id === "adidas"), false);
 
   const mixed = [
-    item({ id: "tee", name: "白色T恤", category: "top" }),
-    item({ id: "coffee", name: "深咖衬衫", category: "top" }),
-    item({ id: "khaki", name: "卡其直筒裤", category: "bottom", color: "beige" }),
-    item({ id: "loafer", name: "黑色乐福鞋", category: "shoes" }),
-    item({ id: "sneaker", name: "白色运动鞋", category: "shoes" }),
-    item({ id: "brown", name: "棕色夹克", category: "outerwear", color: "brown" }),
-    item({ id: "glasses", name: "近视光学眼镜", category: "accessory" }),
-    item({ id: "hat", name: "滑雪帽", category: "accessory" })
+    item({ id: "tee", name: "白色T恤", category: "top", note: kept }),
+    item({ id: "coffee", name: "深咖衬衫", category: "top", note: kept }),
+    item({ id: "khaki", name: "卡其直筒裤", category: "bottom", color: "beige", note: kept }),
+    item({ id: "loafer", name: "黑色乐福鞋", category: "shoes", note: kept }),
+    item({ id: "sneaker", name: "白色运动鞋", category: "shoes", note: kept }),
+    item({ id: "brown", name: "棕色夹克", category: "outerwear", color: "brown", note: kept }),
+    item({ id: "glasses", name: "近视光学眼镜", category: "accessory", note: kept }),
+    item({ id: "hat", name: "滑雪帽", category: "accessory", note: kept })
   ];
-  const daily = Logic.recommendOutfits(data, mixed, { occasion: "daily", tempText: "16", withAccessory: true });
+  const daily = Logic.recommendOutfits(data, mixed, { occasion: "daily", tempText: "24", withAccessory: true });
   const names = outfitItems(daily).map((entry) => entry.name).join(" ");
-  assert.equal(/乐福|深咖|近视|滑雪/.test(names), false);
-  assert.match(names, /棕色夹克/);
+  assert.equal(/乐福|深咖|近视|滑雪|夹克/.test(names), false);
   assert.match(names, /卡其/);
+  assert.match(names, /白色T恤/);
+  const cool = Logic.recommendOutfits(data, mixed, { occasion: "daily", tempText: "16" });
+  assert.equal(cool.outfits.length, 0);
 });
 
 test("retired and record items stay out of the main filter and search can use category labels", () => {
@@ -201,7 +191,7 @@ test("import merge keeps omitted items, drops unsafe images, and can apply statu
   assert.equal(preview.preview.added.length, 1);
   assert.equal(preview.preview.keptDespiteOmission, 1);
   assert.equal(preview.preview.rejected.length, 2);
-  assert.equal(preview.preview.imageDropped >= 1, true);
+  assert.equal(preview.preview.notices.some((notice) => notice.id === first.id && notice.field === "image" && notice.action === "未覆盖"), true);
   assert.deepEqual(first, before);
 
   const safeItems = Logic.mergeCatalog([first, second], preview.preview.safeNext, data.statuses.map((row) => row.id));

@@ -142,12 +142,136 @@
     return info;
   }
 
+  function ownershipEvidence(data, item) {
+    var note = (item && item.note) || "";
+    var core = (data && data.core_items) || [];
+    var inCore = !!(item && core.indexOf(item.id) !== -1);
+    if (item && item._retainLocal === "no") {
+      return { proven: false, kind: "revoked", reason: "你在本机撤销了保留确认，自动搭配不用它。公开清单没有改。" };
+    }
+    if (item && item._retainLocal === "yes") {
+      return { proven: true, kind: "local", reason: "你在本机确认现在仍保留、可穿。公开清单里的状态和备注都没有改。" };
+    }
+    if (/已确认仍在/.test(note) && /可穿/.test(note)) {
+      return { proven: true, kind: "note", reason: "备注写明「已确认仍在、可穿用」。这是保留证据，不是款号核实。" };
+    }
+    var reason = "";
+    var kind = "status";
+    if (/已核实/.test(note)) {
+      kind = "model";
+      reason = "备注核实的是款式、款号、水洗或购买关联，没有写明现在仍保留可穿。";
+    } else if (/已确认/.test(note)) {
+      kind = "identity";
+      reason = "备注里的「已确认」没有同时写「仍在、可穿」，不能当成现在还留着。";
+    } else if (/已购可穿/.test(note)) {
+      kind = "bought";
+      reason = "「已购可穿」只说明买过并曾当作可穿，不是新的保留证明。";
+    } else if (item && item.status === "可穿") {
+      kind = "status";
+      reason = "状态是可穿，但没有写明现在仍保留。购买记录不能当成已经证实。";
+    } else {
+      kind = "other";
+      reason = "没有进入自动搭配的保留证据。";
+    }
+    if (inCore) reason += "它列在核心清单里，但名单不能代替这句保留原话。";
+    return { proven: false, kind: kind, reason: reason };
+  }
+
   function confirmationTier(data, item) {
-    var core = data.core_items || [];
-    var note = item.note || "";
-    if (core.indexOf(item.id) !== -1 || /已确认仍在|已核实/.test(note)) return 1;
-    if (/已购可穿/.test(note)) return 2;
+    var evidence = ownershipEvidence(data, item);
+    if (evidence.proven && evidence.kind === "note") return 1;
+    if (evidence.kind === "bought") return 2;
     return 3;
+  }
+
+  function tempBand(temp, cfg) {
+    if (temp == null) return "unknown";
+    if (temp <= cfg.cold) return "cold";
+    if (temp < cfg.cool) return "cool";
+    if (temp < cfg.hot) return "mild";
+    return "hot";
+  }
+
+  function lightTop(item) {
+    var g = classify(item);
+    return (g.shortSleeve || /T恤|Polo|POLO|polo/.test(item.name || "")) && !g.longSleeve;
+  }
+
+  function warmthOk(item, temp, cfg) {
+    if (temp == null) return { ok: true, judged: false, reason: "温度未知，不判断厚薄。" };
+    var g = classify(item);
+    var field = item.warmth || "";
+    var band = tempBand(temp, cfg);
+    if (["shoes", "accessory", "bag"].indexOf(item.category) !== -1) {
+      return { ok: true, judged: true, reason: "鞋和配饰不代替衣服的保暖层。" };
+    }
+    if (band === "cold") {
+      if (item.category === "top" || item.category === "dress") {
+        if (lightTop(item)) return { ok: false, judged: true, reason: "短袖、Polo 或 T 恤不能作为 " + temp + "℃ 的上衣，加羽绒也不把它算成保暖层。" };
+        if (g.longSleeve || field === "warm") return { ok: true, judged: true, reason: "有长袖或保暖字段。" };
+        return { ok: false, judged: true, reason: "没有长袖或保暖证据，不能用于 " + temp + "℃。" };
+      }
+      if (item.category === "bottom") {
+        if (g.shorts) return { ok: false, judged: true, reason: "短裤不用于低温。" };
+        if (g.lined || field === "warm" || field === "medium") return { ok: true, judged: true, reason: "有加绒、中等或保暖厚薄。" };
+        return { ok: false, judged: true, reason: "下装没有保暖证据。偏薄或没填厚薄，都不能用于 " + temp + "℃。" };
+      }
+      if (item.category === "outerwear") {
+        if (g.sunShell) return { ok: false, judged: true, reason: "防晒衣不是防寒层。" };
+        if (g.heavy || field === "warm") return { ok: true, judged: true, reason: "名称是羽绒、棉服、皮草，或厚薄为保暖。" };
+        return { ok: false, judged: true, reason: "不是明确的防寒外套。" };
+      }
+    }
+    if (band === "cool") {
+      if (item.category === "top" || item.category === "dress") {
+        if (lightTop(item)) return { ok: false, judged: true, reason: temp + "℃ 低于 " + cfg.cool + "℃，短袖不能单独当上衣。" };
+        if (g.longSleeve || field === "medium" || field === "warm") return { ok: true, judged: true, reason: "有长袖或中等以上厚薄。" };
+        return { ok: false, judged: true, reason: "厚薄证据不足，不在这个气温使用。" };
+      }
+      if (item.category === "bottom") {
+        if (g.shorts || field === "light") return { ok: false, judged: true, reason: "短裤或清单写明偏薄的下装，不用于 " + temp + "℃。" };
+        if (field === "medium" || field === "warm" || g.lined) return { ok: true, judged: true, reason: "有中等以上或加绒证据。" };
+        return { ok: false, judged: true, reason: "没有厚薄证据，不在偏低气温里使用。" };
+      }
+      if (item.category === "outerwear") {
+        if (g.heavy || field === "warm") return { ok: false, judged: true, reason: "羽绒服或保暖外套不自动加在这个气温。" };
+        if (g.sunShell) return { ok: false, judged: true, reason: "防晒衣不当这个气温的外套。" };
+        return { ok: true, judged: true, reason: "可以当作薄外套。" };
+      }
+    }
+    if (band === "mild" || band === "hot") {
+      if (g.heavy || g.lined || field === "warm" || (band === "hot" && field === "medium")) {
+        return { ok: false, judged: true, reason: "羽绒、加绒或偏厚字段不用于 " + temp + "℃。" };
+      }
+      if (item.category === "outerwear") return { ok: false, judged: true, reason: temp + "℃ 不自动加外套。" };
+      return { ok: true, judged: true, reason: "没有发现和 " + temp + "℃ 冲突的厚薄证据。" };
+    }
+    return { ok: false, judged: true, reason: "无法判断厚薄。" };
+  }
+
+  function occasionOk(item, occasion) {
+    var g = classify(item);
+    var name = (item.name || "") + (item.note || "");
+    if (item.category === "shoes") {
+      if (g.dressShoe && occasion !== "formal") return false;
+      if (occasion === "sport") return g.running || /运动|跑/.test(item.name || "");
+      if (occasion === "formal") return g.dressShoe;
+      return true;
+    }
+    if (item.category === "top" || item.category === "dress") {
+      if (occasion === "sport") return item.style === "sport" || /运动|速干/.test(item.name || "");
+      if (occasion === "formal") return /长袖/.test(item.name || "") && /衬衫/.test(item.name || "");
+      if (occasion === "work") return !/针织开襟|偏透/.test(name) && !g.baseLayer;
+      return !g.baseLayer;
+    }
+    if (item.category === "bottom") {
+      if (occasion === "sport") return item.style === "sport" || /运动|束脚|跑/.test(item.name || "");
+      if (occasion === "formal") return /裤/.test(item.name || "") && !/短裤/.test(item.name || "");
+      if (occasion === "work") return !g.shorts;
+      return true;
+    }
+    if (item.category === "outerwear") return occasion !== "sport";
+    return false;
   }
 
   function seasonalAdjustment(item, temp, cfg) {
@@ -374,13 +498,12 @@
 
   function explain(data, items, temp) {
     var parts = items.map(function (item) {
-      var tier = confirmationTier(data, item);
-      var certainty = tier === 1 ? "较早确认" : tier === 2 ? "备注为已购可穿" : "仅状态为可穿";
-      return labelOf(data.categories, item.category, item.category) + "（" + certainty + "）";
+      var evidence = ownershipEvidence(data, item);
+      return labelOf(data.categories, item.category, item.category) + "（" + (evidence.kind === "local" ? "本机确认仍保留" : "备注确认仍保留") + "）";
     });
     var reasons = [parts.join("、") + "。"];
-    if (temp == null) reasons.push("未填气温，所以没有加外套，也没有按天气改厚薄。");
-    else reasons.push("气温用的是填写的 " + temp + "℃，不是天气预报。");
+    if (temp == null) reasons.push("温度未知，不作保暖判断。没有把缺外套理解成适合今天。");
+    else reasons.push("这些单品过了 " + temp + "℃ 的厚薄门槛。不是天气预报，也没有试穿。");
     return reasons;
   }
 
@@ -399,10 +522,14 @@
     var occasion = opts.occasion || "daily";
     var temp = parseTemp(opts.tempText);
     var withAccessory = !!opts.withAccessory;
-    var general = ["这是根据清单字段做的筛选，没有上身试穿，也没有改脸、肤色或体型。"];
+    var cfg = tempConfig(data);
+    var band = tempBand(temp, cfg);
     var dup = duplicateIndex(items || []);
+    var general = ["这是根据保留证据和厚薄门槛做的筛选，没有上身试穿，也没有改脸、肤色或体型。"];
     var held = [];
-    var available = [];
+    var review = [];
+    var blocked = [];
+    var proven = [];
     (items || []).forEach(function (item) {
       if (!eligible(data, item)) return;
       var twin = dup.get(item.id);
@@ -410,89 +537,83 @@
         held.push({
           id: item.id,
           name: item.name,
-          reason: "同名或同款号已有「已淘汰/不常穿」记录，自动搭配先跳过，避免把淘汰款再穿出去。单品仍留在衣橱，没有删除。"
+          reason: "同名或同款号已有「已淘汰/不常穿」记录，自动搭配先跳过。单品仍留在衣橱，没有删除。"
         });
         return;
       }
-      available.push(item);
+      var evidence = ownershipEvidence(data, item);
+      if (!evidence.proven) {
+        review.push({ id: item.id, name: item.name, kind: evidence.kind, reason: evidence.reason });
+        return;
+      }
+      if ((item.category === "accessory" || item.category === "bag") && !withAccessory) return;
+      var warmth = warmthOk(item, temp, cfg);
+      var fitsOccasion = occasionOk(item, occasion);
+      if (!warmth.ok || !fitsOccasion) {
+        blocked.push({ id: item.id, name: item.name, reason: !warmth.ok ? warmth.reason : "不适合当前场合。" });
+        return;
+      }
+      proven.push(item);
     });
-    if (temp == null) general.push("没有填写气温，不推测今天冷热，也不自动加外套。");
-    else general.push("只使用你填写的 " + temp + "℃。清单里的参考气温不会自动当成今天。厚薄字段没填的，不会被补写成某种材质。");
-    if (occasion === "work") {
-      general.push("「上班工地」按方便走动来选，少用正装皮鞋。这是对场合名称的理解，不是对工作内容的记录。");
-    } else if (occasion === "formal") {
-      general.push("正式场合只在现有可穿单品里挑相对得体的，没有编造清单外的西装。");
-    } else if (occasion === "sport") {
-      general.push("运动场合优先能看出运动属性的单品。");
+    general.push("状态写成可穿，但没有「已确认仍在、可穿用」或本机确认的，有 " + review.length + " 件。这些没有拿来拼方案。");
+    general.push("没有使用只凭购买记录或款号核实标成可穿的衣服来补齐。");
+    if (temp == null) {
+      general.push("没有填写气温。温度未知，方案不作保暖判断，也没有把「不加外套」当成适合今天的天气。清单里的 24℃ 不会自动当成当日气温。");
+    } else {
+      general.push("只按你填写的 " + temp + "℃ 做门槛，不是天气预报。厚薄没写明的，在需要保暖时视为证据不足，不猜测材质。");
     }
-    if (!withAccessory) general.push("默认不加配饰和包，避免在不知道当天的情况下硬配墨镜或帽子。");
-    if (!available.length) {
-      return { outfits: [], general: general.concat(["当前没有能进入搭配的已确认可穿单品。"]), heldBack: held, temp: temp };
-    }
+    blocked.forEach(function (entry) {
+      general.push("已有保留证据但这次不用：" + entry.name + "。" + entry.reason);
+    });
 
-    var order = (data.categories || []).map(function (row) { return row.id; });
-    var pools = {};
-    order.forEach(function (cat) {
-      var inCat = available.filter(function (item) { return item.category === cat; });
+    function pool(cat) {
+      var inCat = proven.filter(function (item) { return item.category === cat; });
       var normal = inCat.filter(function (item) { return !item.low_priority; });
-      var used = normal.length ? normal : inCat;
-      if (!normal.length && inCat.length) {
-        general.push(labelOf(data.categories, cat, cat) + "只有不优先单品，这次会用它，因为没有其他选择。");
-      }
-      pools[cat] = used.sort(byScore(data, occasion, temp)).slice(0, POOL_CAP);
-    });
-
+      return (normal.length ? normal : inCat).sort(byScore(data, occasion, temp)).slice(0, POOL_CAP);
+    }
+    var tops = pool("top");
+    var bottoms = pool("bottom");
+    var dresses = pool("dress");
+    var shoes = pool("shoes");
+    var outers = [];
+    if (band === "cold") outers = pool("outerwear");
+    else if (band === "cool") outers = pool("outerwear");
+    var needOuter = band === "cold" || band === "cool";
+    var gaps = [];
+    if (!tops.length && !dresses.length) gaps.push("没有已确认仍保留、并且适合这个场合和气温的上衣或连衣裙。");
+    if (!dresses.length && !bottoms.length) gaps.push("没有已确认仍保留、并且适合这个场合和气温的下装。");
+    if (!shoes.length) gaps.push("没有已确认仍保留、并且适合这个场合的鞋。");
+    if (needOuter && !outers.length) gaps.push("这个气温需要已确认仍保留的合适外套，衣橱里没有能同时满足保留证据和厚薄的外套。");
+    if (band === "cold" && blocked.some(function (entry) { return /短袖|Polo|T 恤/.test(entry.reason); })) {
+      gaps.push("短袖不能靠外层羽绒凑成一套。");
+    }
+    var canBuild = ((tops.length && bottoms.length) || dresses.length) && shoes.length && (!needOuter || outers.length);
+    if (!canBuild) {
+      general.push("衣橱证据不足，没有拼成一套。");
+      return { outfits: [], general: general, heldBack: held, review: review, blocked: blocked, gaps: gaps, temp: temp, warmthJudged: temp != null };
+    }
+    if (pool("bottom").length && pool("bottom").every(function (item) { return item.low_priority; })) {
+      general.push("下装只有不优先单品通过了门槛，这次才会用它。");
+    }
+    var order = (data.categories || []).map(function (row) { return row.id; });
     var bases = [];
-    (pools.top || []).forEach(function (top) {
-      (pools.bottom || []).forEach(function (bottom) { bases.push([top, bottom]); });
-    });
-    (pools.dress || []).forEach(function (dress) { bases.push([dress]); });
-    if (!bases.length) {
-      return { outfits: [], general: general.concat(["缺少可搭配的上衣和下装，也没有连衣裙，组不出一套。"]), heldBack: held, temp: temp };
-    }
-
-    var cfg = tempConfig(data);
-    var shoes = pools.shoes && pools.shoes.length ? pools.shoes : [null];
-    if (!(pools.shoes && pools.shoes.length)) general.push("缺少可搭配的鞋，方案会不完整。");
-    var outers = [null];
-    var outerPool = pools.outerwear || [];
-    if (temp != null && temp < cfg.cool) {
-      var suitable = outerPool.filter(function (item) {
-        var g = classify(item);
-        if (g.sunShell && temp <= cfg.cold) return false;
-        if ((g.heavy || g.lined) && temp > cfg.cold) return false;
-        return true;
-      });
-      if (suitable.length) outers = suitable.slice(0, 8);
-      else general.push("按填写的气温应该看外套，但没有合适的可穿外套。没有拿防晒衣当防寒，也没有在偏暖时硬加羽绒服。");
-      if (outerPool.some(function (item) { return classify(item).heavy || classify(item).lined; }) && temp > cfg.cold) {
-        general.push("羽绒服或加绒外套这次没有自动加入：填写的气温高于厚外套阈值。是否真的太厚，是按名称推测。");
-      }
-      if (outerPool.some(function (item) { return classify(item).sunShell; }) && temp <= cfg.cold) {
-        general.push("防晒衣没有当成防寒外套。");
-      }
-    }
-
+    tops.forEach(function (top) { bottoms.forEach(function (bottom) { bases.push([top, bottom]); }); });
+    dresses.forEach(function (dress) { bases.push([dress]); });
+    var outerChoices = needOuter ? outers : [null];
     var candidates = [];
     bases.forEach(function (base) {
       shoes.forEach(function (shoe) {
-        outers.forEach(function (outer) {
+        outerChoices.forEach(function (outer) {
           var picked = base.concat([shoe, outer]).filter(Boolean);
           if (withAccessory) {
-            var extra = pickAccessory(data, pools.accessory || [], occasion, temp, picked);
-            if (extra) picked.push(extra);
+            var extra = pickAccessory(data, pool("accessory"), occasion, temp, picked);
+            if (extra && warmthOk(extra, temp, cfg).ok && occasionOk(extra, occasion)) picked.push(extra);
           }
           picked.sort(function (a, b) {
             return order.indexOf(a.category) - order.indexOf(b.category) || String(a.id).localeCompare(String(b.id));
           });
-          var score = picked.reduce(function (sum, item) {
-            return sum + itemScore(data, item, occasion, temp);
-          }, 0) + colorScore(data, picked);
-          candidates.push({
-            id: outfitId(picked),
-            items: picked,
-            score: Math.round(score * 10) / 10
-          });
+          var score = picked.reduce(function (sum, item) { return sum + itemScore(data, item, occasion, temp); }, 0) + colorScore(data, picked);
+          candidates.push({ id: outfitId(picked), items: picked, score: Math.round(score * 10) / 10 });
         });
       });
     });
@@ -501,15 +622,10 @@
       var prev = bestById.get(candidate.id);
       if (!prev || candidate.score > prev.score) bestById.set(candidate.id, candidate);
     });
-    candidates = Array.from(bestById.values());
-    candidates.sort(function (a, b) { return b.score - a.score || a.id.localeCompare(b.id); });
-
+    candidates = Array.from(bestById.values()).sort(function (a, b) { return b.score - a.score || a.id.localeCompare(b.id); });
     var primary = candidates[0];
-    if (!primary) {
-      return { outfits: [], general: general.concat(["当前条件无法形成完整搭配。"]), heldBack: held, temp: temp };
-    }
     var backup = null;
-    for (var i = 1; i < candidates.length; i += 1) {
+    for (var i = 1; primary && i < candidates.length; i += 1) {
       var mainPiece = primary.items.find(function (item) { return item.category === "top" || item.category === "dress"; });
       var otherPiece = candidates[i].items.find(function (item) { return item.category === "top" || item.category === "dress"; });
       if (mainPiece && otherPiece && mainPiece.id === otherPiece.id) continue;
@@ -517,22 +633,24 @@
       backup = candidates[i];
       break;
     }
-    var selected = [primary];
-    if (backup) selected.push(backup);
-    else general.push("没有另一套不同上衣或连衣裙的备选，所以只给一套，没有凑第二套。");
-
+    if (!backup) general.push("没有另一件已确认仍保留的上衣或连衣裙，所以没有备选，没有用未证实的单品凑第二套。");
+    var selected = [primary].concat(backup ? [backup] : []);
     var outfits = selected.map(function (candidate, index) {
+      var unknown = temp == null;
       return {
         id: candidate.id,
         role: index === 0 ? "primary" : "backup",
-        title: index === 0 ? "主要搭配" : "备选搭配",
+        title: unknown ? (index === 0 ? "已确认单品组合" : "另一组已确认单品") : (index === 0 ? "主要搭配" : "备选搭配"),
+        warmthJudged: temp != null,
         items: candidate.items,
-        warnings: buildWarnings(data, candidate.items, occasion, temp, dup),
+        warnings: buildWarnings(data, candidate.items, occasion, temp, dup).filter(function (warning) {
+          return warning.indexOf("脱掉外套后可能不够") === -1 && warning.indexOf("没有合适的外套") === -1;
+        }),
         reasons: explain(data, candidate.items, temp),
         score: candidate.score
       };
     });
-    return { outfits: outfits, general: general, heldBack: held, temp: temp };
+    return { outfits: outfits, general: general, heldBack: held, review: review, blocked: blocked, gaps: gaps, temp: temp, warmthJudged: temp != null };
   }
 
   function countsOf(items) {
@@ -616,32 +734,103 @@
   }
 
   function validId(id) {
+    if (id === "__proto__" || id === "constructor" || id === "prototype") return false;
     return /^[A-Za-z0-9._-]{1,80}$/.test(id);
   }
 
-  function sanitizeItem(data, raw) {
+  function stripMarkup(text) {
+    var raw = String(text || "");
+    var stripped = /<[^>]*>/.test(raw) || /javascript:/i.test(raw);
+    var cleaned = raw.replace(/<[^>]*>/g, "").replace(/javascript:/gi, "");
+    return { text: cleaned, stripped: stripped && cleaned !== raw };
+  }
+
+  function redactSensitive(text) {
+    var hits = [];
+    var next = String(text || "").replace(/(^|[^\d])(1[3-9]\d{9})(?!\d)/g, function (all, prefix, phone) {
+      hits.push("疑似电话已打码，其余文字保留");
+      return prefix + "[已打码]";
+    });
+    next = next.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, function () {
+      hits.push("邮箱已打码，其余文字保留");
+      return "[已打码]";
+    });
+    return { text: next, hits: hits };
+  }
+
+  function classifyStoredImage(src, scope) {
+    if (src == null || src === "") return { image: null, image_scope: "" };
+    var value = String(src).trim();
+    if (/^(javascript|vbscript|data):/i.test(value) && !/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(value)) {
+      return { image: null, image_scope: "", discard: "脚本协议、网页或 SVG 不能当图片保存" };
+    }
+    if (/^images\/[A-Za-z0-9._-]+$/.test(value)) return { image: value, image_scope: "repo" };
+    if (scope !== "local") {
+      return { image: null, image_scope: "", discard: "公开字段只接受仓库里的 images/ 相对路径，这条没有写进公开清单" };
+    }
+    if (/^https?:\/\//i.test(value)) {
+      try {
+        var parsed = new URL(value);
+        if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+          return { image: null, image_scope: "", discard: "图片协议不是 http 或 https" };
+        }
+      } catch (err) {
+        return { image: null, image_scope: "", discard: "外链无法解析，没有保存" };
+      }
+      return { image: value, image_scope: "local-remote", kept: "外链只留在本机。打开图片时会向该网址请求，不会写进公开清单。" };
+    }
+    if (/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(value)) {
+      if (value.length > 500000) return { image: null, image_scope: "", discard: "本机图片数据超过约 500KB，没有保存" };
+      return { image: value, image_scope: "local-data", kept: "图片数据只留在本机，不会写进公开仓库。页面不能分辨是不是人脸，请不要导入本人照片。" };
+    }
+    return { image: null, image_scope: "", discard: "图片格式不支持。可用仓库相对路径、http(s)，或 png/jpeg/webp/gif 的 data 图片。" };
+  }
+
+  function localImageSrc(src) {
+    var judged = classifyStoredImage(src, "local");
+    if (!judged.image) return null;
+    if (judged.image_scope === "repo" || judged.image_scope === "local-remote" || judged.image_scope === "local-data") return judged.image;
+    return null;
+  }
+
+  function sanitizeItem(data, raw, options) {
+    var scope = options && options.scope === "local" ? "local" : "public";
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { ok: false, reason: "不是单品对象" };
     var id = cleanText(raw.id, 80);
-    if (!validId(id)) return { ok: false, reason: "编号无效" };
-    var name = cleanText(raw.name, 180);
-    if (!name) return { ok: false, reason: "缺少名称" };
-    if (hasPrivatePayload(name)) return { ok: false, id: id, reason: "名称里有电话、邮箱或图片数据，已整件拒绝" };
+    if (!validId(id)) return { ok: false, id: id, reason: "编号无效" };
+    var nameResult = stripMarkup(cleanText(raw.name, 180));
+    var name = nameResult.text;
+    if (!name) return { ok: false, id: id, reason: "缺少名称" };
+    if (/data:image\//i.test(name) || /javascript:/i.test(String(raw.name || ""))) {
+      return { ok: false, id: id, reason: "名称里有脚本或图片数据，已整件拒绝" };
+    }
     var categories = (data.categories || []).map(function (row) { return row.id; });
     if (categories.indexOf(raw.category) === -1) return { ok: false, id: id, reason: "分类不在清单允许的范围内" };
     var statuses = (data.statuses || []).map(function (row) { return row.id; });
     if (statuses.indexOf(raw.status) === -1) return { ok: false, id: id, reason: "状态不在允许的四种之内" };
     var warnings = [];
-    var note = cleanText(raw.note, 500);
-    var retire = cleanText(raw.retire_reason, 300);
-    if (hasPrivatePayload(note) || hasPrivatePayload(retire)) {
-      note = "";
-      retire = "";
-      warnings.push("备注含电话、邮箱或图片数据，已去掉备注");
+    var changes = [];
+    if (nameResult.stripped) changes.push({ id: id, field: "name", action: "去掉标签", reason: "名称里的 HTML 或脚本协议已去掉，其余文字保留" });
+    function cleanNote(value, field, max) {
+      var original = String(value == null ? "" : value);
+      var clipped = original.length > max;
+      var marked = stripMarkup(cleanText(original, max));
+      var redacted = redactSensitive(marked.text);
+      if (clipped) changes.push({ id: id, field: field, action: "截断", reason: "超过 " + max + " 字，多出来的没有保存" });
+      if (marked.stripped) changes.push({ id: id, field: field, action: "去掉标签", reason: "HTML 或脚本协议已去掉，其余文字保留" });
+      redacted.hits.forEach(function (hit) { changes.push({ id: id, field: field, action: "打码", reason: hit }); });
+      return redacted.text;
     }
-    var image = safeImage(raw.image);
-    if (raw.image && !image) {
-      image = null;
-      warnings.push("图片不是本仓库 images/ 下的相对路径，外链和上传图没有采用");
+    var note = cleanNote(raw.note, "note", scope === "local" ? 2000 : 500);
+    var retire = cleanNote(raw.retire_reason, "retire_reason", 300);
+    var stored = classifyStoredImage(raw.image, scope);
+    var image = stored.image;
+    var imageScope = stored.image_scope || "";
+    if (raw.image && stored.discard) {
+      changes.push({ id: id, field: "image", action: "未采用", reason: stored.discard });
+      warnings.push(stored.discard);
+    } else if (stored.kept) {
+      changes.push({ id: id, field: "image", action: "留在本机", reason: stored.kept });
     }
     var colors = (data.colors || []).map(function (row) { return row.id; });
     var color = cleanText(raw.color, 40);
@@ -675,11 +864,12 @@
       lookalike: !!lookalike,
       low_priority: raw.low_priority === true,
       image: image,
+      image_scope: imageScope,
       image_kind: imageKind,
       note: note,
-      retire_reason: raw.status === "已淘汰/不常穿" ? retire : cleanText(raw.retire_reason, 300)
+      retire_reason: retire
     };
-    return { ok: true, item: item, warnings: warnings };
+    return { ok: true, item: item, warnings: warnings, changes: changes };
   }
 
   function isEmptyField(value) {
@@ -695,6 +885,9 @@
       var copy = {};
       if (row.status) copy.status = row.status;
       if (row.retire_reason) copy.retire_reason = row.retire_reason;
+      if (row.retain === "yes" || row.retain === "no") copy.retain = row.retain;
+      if (typeof row.localImage === "string") copy.localImage = row.localImage;
+      if (row.image_scope) copy.image_scope = row.image_scope;
       if (row.fill && typeof row.fill === "object") copy.fill = Object.assign({}, row.fill);
       next.overrides[key] = copy;
     });
@@ -709,6 +902,14 @@
       next.status = override.status;
       if (override.status === "已淘汰/不常穿") {
         next.retire_reason = override.retire_reason || item.retire_reason || "仅在本机标为已淘汰/不常穿，未写入公开清单。";
+      }
+    }
+    if (override.retain === "yes" || override.retain === "no") next._retainLocal = override.retain;
+    if (override.localImage) {
+      var localPicture = classifyStoredImage(override.localImage, "local");
+      if (localPicture.image && localPicture.image_scope !== "repo") {
+        next.image = localPicture.image;
+        next.image_scope = localPicture.image_scope;
       }
     }
     var fill = override.fill || {};
@@ -766,18 +967,26 @@
     var statusChanges = [];
     var rejected = [];
     var imageDropped = 0;
+    var notices = [];
+    var seenFile = Object.create(null);
     var statuses = (data.statuses || []).map(function (row) { return row.id; });
     var effective = mergeCatalog(publicItems, local, statuses);
     var currentById = new Map(effective.map(function (item) { return [item.id, item]; }));
 
     parsed.items.forEach(function (rawItem) {
-      var result = sanitizeItem(data, rawItem);
+      var result = sanitizeItem(data, rawItem, { scope: "local" });
       if (!result.ok) {
         rejected.push({ id: result.id || "", reason: result.reason });
+        notices.push({ id: result.id || "", field: "item", action: "拒绝整件", reason: result.reason });
         return;
       }
-      if ((result.warnings || []).some(function (warning) { return warning.indexOf("图片") !== -1; })) imageDropped += 1;
       var item = result.item;
+      if (seenFile[item.id]) {
+        notices.push({ id: item.id, field: "id", action: "未采用", reason: "同一文件里这个编号出现了不止一次，只保留第一条。" });
+        return;
+      }
+      seenFile[item.id] = true;
+      (result.changes || []).forEach(function (change) { notices.push(change); });
       incomingIds[item.id] = true;
       var current = currentById.get(item.id);
       if (!current) {
@@ -793,11 +1002,30 @@
       var fill = {};
       var fields = [];
       FILL_KEYS.forEach(function (key) {
+        if (key === "image") return;
         if (isEmptyField(current[key]) && !isEmptyField(item[key])) {
           fill[key] = item[key];
           fields.push(key);
         }
       });
+      if (item.image_scope === "repo" && isEmptyField(current.image) && item.image) {
+        fill.image = item.image;
+        fields.push("image");
+      } else if (item.image_scope && item.image_scope !== "repo") {
+        if (safeImage(current.image)) {
+          notices.push({ id: item.id, field: "image", action: "未覆盖", reason: "公开清单已有仓库图片，导入的外链或上传图不覆盖它，原图还在。" });
+        } else if (item.image) {
+          if (!safeNext.overrides[item.id]) safeNext.overrides[item.id] = {};
+          if (!statusNext.overrides[item.id]) statusNext.overrides[item.id] = {};
+          safeNext.overrides[item.id].localImage = item.image;
+          safeNext.overrides[item.id].image_scope = item.image_scope;
+          statusNext.overrides[item.id].localImage = item.image;
+          statusNext.overrides[item.id].image_scope = item.image_scope;
+          notices.push({ id: item.id, field: "image", action: "留在本机", reason: "这张图只补在本机，没有写进公开清单。" });
+        }
+      } else if (item.image && !isEmptyField(current.image) && item.image !== current.image) {
+        notices.push({ id: item.id, field: "image", action: "未覆盖", reason: "已有图片和导入图片不同，保留原来的，没有静默替换。" });
+      }
       if (fields.length) {
         if (!safeNext.overrides[item.id]) safeNext.overrides[item.id] = {};
         safeNext.overrides[item.id].fill = Object.assign({}, (safeNext.overrides[item.id].fill || {}), fill);
@@ -816,6 +1044,7 @@
     });
 
     var keptDespiteOmission = effective.filter(function (item) { return !incomingIds[item.id]; }).length;
+    imageDropped = notices.filter(function (notice) { return notice.field === "image" && notice.action === "未采用"; }).length;
 
     return {
       ok: true,
@@ -824,6 +1053,7 @@
         filled: filled,
         statusChanges: statusChanges,
         rejected: rejected,
+        notices: notices,
         imageDropped: imageDropped,
         keptDespiteOmission: keptDespiteOmission,
         incomingCount: parsed.items.length,
@@ -850,6 +1080,9 @@
         var copy = {};
         if (typeof row.status === "string") copy.status = row.status;
         if (typeof row.retire_reason === "string") copy.retire_reason = cleanText(row.retire_reason, 300);
+        if (row.retain === "yes" || row.retain === "no") copy.retain = row.retain;
+        if (typeof row.localImage === "string") copy.localImage = row.localImage;
+        if (typeof row.image_scope === "string") copy.image_scope = row.image_scope;
         if (row.fill && typeof row.fill === "object") {
           copy.fill = {};
           FILL_KEYS.forEach(function (field) {
@@ -859,8 +1092,11 @@
         state.overrides[key] = copy;
       });
       if (Array.isArray(parsed.extraItems)) {
+        var seenExtra = Object.create(null);
         parsed.extraItems.slice(0, MAX_EXTRA).forEach(function (item) {
-          if (item && validId(item.id)) state.extraItems.push(item);
+          if (!item || !validId(item.id) || seenExtra[item.id]) return;
+          seenExtra[item.id] = true;
+          state.extraItems.push(item);
         });
       }
       return { ok: true, state: state, empty: false };
@@ -874,6 +1110,7 @@
       if (!storage) throw new Error("没有可用的本地存储");
       var payload = { version: 1, overrides: {}, extraItems: state.extraItems || [] };
       Object.keys(state.overrides || {}).forEach(function (key) {
+        if (!validId(key)) return;
         payload.overrides[key] = state.overrides[key];
       });
       storage.setItem(LOCAL_KEY, JSON.stringify(payload));
@@ -899,6 +1136,10 @@
     modelKeys: modelKeys,
     duplicateIndex: duplicateIndex,
     confirmationTier: confirmationTier,
+    ownershipEvidence: ownershipEvidence,
+    warmthOk: warmthOk,
+    occasionOk: occasionOk,
+    localImageSrc: localImageSrc,
     itemScore: itemScore,
     recommendOutfits: recommendOutfits,
     countsOf: countsOf,
