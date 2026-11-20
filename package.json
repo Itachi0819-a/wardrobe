@@ -1,0 +1,8 @@
+{
+  "name": "wardrobe",
+  "private": true,
+  "scripts": {
+    "check": "node --check logic.js && node --check app.js",
+    "test": "node --test"
+  }
+}

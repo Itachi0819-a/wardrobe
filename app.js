@@ -1,11 +1,36 @@
 (function () {
-  const root = document.getElementById("app");
+  var Logic = window.WardrobeLogic;
+  var root = document.getElementById("app");
 
-  const state = {
+  function esc(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function bootError(msg) {
+    if (!root) return;
+    root.innerHTML = '<p class="error">' + esc(msg) + "</p>";
+  }
+
+  if (!root) return;
+  if (!Logic) {
+    bootError("页面脚本不完整，缺少 logic.js。");
+    return;
+  }
+
+  var state = {
     data: null,
+    items: [],
+    counts: null,
+    local: Logic.emptyLocal(),
+    storageError: "",
     tab: "suggest",
     occasion: "daily",
     tempText: "",
+    withAccessory: false,
     generated: false,
     cat: "all",
     statusFilter: "wearable",
@@ -13,597 +38,653 @@
     query: "",
     picked: null,
     showCulled: false,
+    importPreview: null,
+    importError: "",
+    restoreArmed: false,
+    armRemove: "",
+    forceTop: false,
+    pendingScroll: ""
   };
 
-  function esc(s) {
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+  root.addEventListener("error", function (event) {
+    var target = event.target;
+    if (!target || target.tagName !== "IMG") return;
+    var box = document.createElement("div");
+    box.className = target.classList.contains("big") ? "big thumb-empty" : "thumb thumb-empty";
+    box.textContent = "图片没有加载出来。没有用其他图片代替。";
+    target.replaceWith(box);
+  }, true);
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && state.picked) {
+      state.picked = null;
+      state.armRemove = "";
+      render();
+    }
+  });
+
+  function statusIds() {
+    return (state.data.statuses || []).map(function (row) { return row.id; });
   }
 
-  function labelOf(list, id, fallback) {
-    const found = (list || []).find((x) => x.id === id);
-    return found ? found.label : fallback || id || "";
+  function recompute() {
+    state.items = Logic.mergeCatalog(state.data.items || [], state.local, statusIds());
+    state.counts = Logic.countsOf(state.items);
   }
 
-  function toneOf(status) {
-    const found = (state.data.statuses || []).find((x) => x.id === status);
-    return found ? found.tone : "neutral";
+  function persist() {
+    var result = Logic.writeLocal(window.localStorage, state.local);
+    state.storageError = result.ok ? "" : result.error;
+    return result.ok;
   }
 
-  function statusLabel(status) {
-    return labelOf(state.data.statuses, status, status);
-  }
-
-  function catLabel(cat) {
-    return labelOf(state.data.categories, cat, cat);
-  }
-
-  function colorLabel(color) {
-    return labelOf(state.data.colors, color, color);
+  function publicItem(id) {
+    return (state.data.items || []).find(function (item) { return item.id === id; }) || null;
   }
 
   function itemById(id) {
-    return (state.data.items || []).find((item) => item.id === id) || null;
+    return state.items.find(function (item) { return item.id === id; }) || null;
   }
 
-  function isWearable(item) {
-    return item && item.status === "可穿";
+  function capture() {
+    var active = document.activeElement;
+    function left(id) {
+      var el = document.getElementById(id);
+      return el ? el.scrollLeft : 0;
+    }
+    return {
+      page: window.scrollY || 0,
+      cat: left("cat-chips"),
+      status: left("status-chips"),
+      source: left("source-chips"),
+      focus: active && active.id,
+      sel: active && typeof active.selectionStart === "number" ? active.selectionStart : null
+    };
   }
 
-  function isLoafer(item) {
-    return /乐福/.test((item.name || "") + (item.note || ""));
-  }
-
-  function isDeepCoffee(item) {
-    return /深咖/.test((item.name || "") + (item.note || ""));
-  }
-
-  function isLowPriority(item) {
-    return !!(item && item.low_priority);
-  }
-
-  function targetStyle(occasion) {
-    const found = (state.data.occasions || []).find((x) => x.id === occasion);
-    return found ? found.style : "";
-  }
-
-  function parseTemp() {
-    if (state.tempText === "" || state.tempText == null) return null;
-    const value = Number(state.tempText);
-    return Number.isFinite(value) ? value : null;
-  }
-
-  function itemScore(item, occasion, temp) {
-    let score = 0;
-    const style = targetStyle(occasion);
-    if (style && item.style === style) score += 8;
-    else if (
-      style &&
-      item.style &&
-      ((style === "smart" && item.style === "formal") ||
-        (style === "formal" && item.style === "smart"))
-    ) {
-      score += 3;
+  function restore(snap) {
+    var cat = document.getElementById("cat-chips");
+    var status = document.getElementById("status-chips");
+    var source = document.getElementById("source-chips");
+    if (cat) cat.scrollLeft = snap.cat || 0;
+    if (status) status.scrollLeft = snap.status || 0;
+    if (source) source.scrollLeft = snap.source || 0;
+    if (state.forceTop) {
+      state.forceTop = false;
+      window.scrollTo(0, 0);
+    } else {
+      window.scrollTo(0, snap.page || 0);
     }
-    const text = item.name + (item.note || "") + (item.style || "");
-    if (occasion === "formal" || occasion === "work") {
-      if (/衬衫|针织|POLO|Polo|polo|长裤|夹克|皮鞋|墨镜/.test(text)) score += 5;
-      if (/运动裤|卫衣|短裤|跑鞋|帽/.test(text) && occasion === "formal") score -= 8;
-      if (/运动裤|卫衣|短裤/.test(text) && occasion === "work") score -= 3;
-      if (item.category === "shoes" && /跑鞋|运动鞋|Adizero/.test(text) && occasion === "formal")
-        score -= 6;
-    }
-    if (occasion === "date") {
-      if (/墨镜|针织|衬衫|夹克/.test(text)) score += 4;
-      if (/运动裤|卫衣/.test(text)) score -= 2;
-    }
-    if (occasion === "sport") {
-      if (/运动|跑鞋|短裤|卫衣|运动裤|Adidas|速干/.test(text)) score += 8;
-      if (/衬衫|皮鞋|正装|西装/.test(text)) score -= 8;
-    }
-    if (occasion === "daily") {
-      if (/针织|T恤|长裤|休闲/.test(text)) score += 2;
-    }
-    if ((occasion === "formal" || occasion === "date") && item.category === "accessory" && /帽|滑雪/.test(text))
-      score -= 6;
-    if (item.lookalike) score -= 1;
-    const tempCfg = (state.data.scoring && state.data.scoring.temp) || { cold: 12, cool: 20, hot: 26 };
-    if (temp !== null && item.warmth && ["top", "bottom", "dress", "outerwear"].includes(item.category)) {
-      if (temp <= tempCfg.cold && item.warmth === "warm") score += 6;
-      if (temp > tempCfg.cold && temp < tempCfg.cool && item.warmth === "medium") score += 5;
-      if (temp >= tempCfg.hot && item.warmth === "light") score += 6;
-      if (temp >= tempCfg.hot && item.warmth === "warm") score -= 10;
-    }
-    if (item.category === "top") {
-      const preferred = (state.data.scoring && state.data.scoring.preferred_tops) || {};
-      if (preferred[item.id]) score += preferred[item.id];
-    }
-    return score;
-  }
-
-  function colorScore(items) {
-    const neutrals = new Set((state.data.scoring && state.data.scoring.neutrals) || []);
-    const known = [...new Set(items.map((item) => item.color).filter((color) => color && color !== "other"))];
-    if (!known.length) return 0;
-    const accents = known.filter((color) => !neutrals.has(color));
-    return (known.length <= 3 ? 4 : -4) + (accents.length <= 1 ? 3 : -3);
-  }
-
-  function catOrder() {
-    return (state.data.categories || []).map((x) => x.id);
-  }
-
-  function coreKey(items) {
-    return items
-      .filter((item) => ["top", "bottom", "dress"].includes(item.category))
-      .map((item) => item.id)
-      .sort()
-      .join("+");
-  }
-
-  function outfitId(items) {
-    const order = catOrder();
-    return items
-      .slice()
-      .sort((a, b) => order.indexOf(a.category) - order.indexOf(b.category) || a.id.localeCompare(b.id))
-      .map((item) => item.id)
-      .join("+");
-  }
-
-  function buildWarnings(items, occasion, temp) {
-    const warnings = [];
-    if (items.some((item) => item.id === "owned-white-knit-2026")) {
-      warnings.push("白色短袖针织上衣面料偏透，加内搭会热（已有记录，不是新判断）。");
-    }
-    if (items.some((item) => item.id === "owned-khaki-straight-2026")) {
-      warnings.push("卡其直筒长裤曾有裤脚堆积、建议改短的记录；是否已改未知。");
-    }
-    if (items.some((item) => item.lookalike)) {
-      warnings.push("含同款候选或同款参考：主图是同款或近似商品图，不能当成已核对为同一件。");
-    }
-    if (items.some((item) => isLowPriority(item))) {
-      warnings.push("含不优先单品：这是最后才考虑的选择，因为当时没有更合适的同类单品。");
-    }
-    if (
-      temp !== null &&
-      items.some((item) => !item.warmth && ["top", "bottom", "dress", "outerwear", "shoes"].includes(item.category))
-    ) {
-      warnings.push("部分单品未填写厚薄，气温适配只供参考，没有补写舒适或材质标签。");
-    }
-    const tempCfg = (state.data.scoring && state.data.scoring.temp) || { cool: 20 };
-    if (temp !== null && temp < tempCfg.cool && !items.some((item) => item.category === "outerwear")) {
-      warnings.push("气温 " + temp + "℃，可穿衣物里没有可用外套，请按实际天气决定。");
-    }
-    if (occasion === "formal" && !items.some((item) => item.style === "formal" || item.style === "smart")) {
-      warnings.push("当前可穿单品没有标记为正式或通勤，这套只是现有衣物里相对得体的组合，不是正装方案。");
-    }
-    if (items.some((item) => item.id === "owned-dior-club-m1u")) {
-      warnings.push("DIOR 墨镜有镜框偏宽的历史意见；色号为高置信候选，以镜腿刻字为准。");
-    }
-    return warnings;
-  }
-
-  function recommendOutfits(occasion, temp) {
-    const general = [];
-    const available = (state.data.items || []).filter(
-      (item) => isWearable(item) && !isLoafer(item) && !isDeepCoffee(item)
-    );
-    if (!available.length) return { outfits: [], general: ["当前没有满足条件的已确认可穿单品。"] };
-
-    const order = catOrder();
-    const pools = {};
-    for (const cat of order) {
-      const inCat = available.filter((item) => item.category === cat);
-      const preferred = inCat.filter((item) => !isLowPriority(item));
-      pools[cat] = (preferred.length ? preferred : inCat).sort(
-        (a, b) => itemScore(b, occasion, temp) - itemScore(a, occasion, temp) || a.id.localeCompare(b.id)
-      );
-    }
-    const bases = [];
-    for (const top of pools.top || []) for (const bottom of pools.bottom || []) bases.push([top, bottom]);
-    if (!bases.length) {
-      general.push("缺少已确认可穿的上衣或下装，无法组成完整搭配。");
-      return { outfits: [], general };
-    }
-    if (!(pools.shoes && pools.shoes.length)) general.push("缺少已确认可穿的鞋，方案可能不完整。");
-    const shoes = pools.shoes && pools.shoes.length ? pools.shoes : [null];
-    const tempCfg = (state.data.scoring && state.data.scoring.temp) || { cool: 20 };
-    const needOuter = temp !== null && temp < tempCfg.cool;
-    const outers = needOuter && pools.outerwear && pools.outerwear.length ? pools.outerwear : [null];
-    if (needOuter && !(pools.outerwear && pools.outerwear.length)) general.push("按气温应检查外套，但没有满足条件的可用外套。");
-    if (temp === null) general.push("未填写气温，不自动加外套，也不推断天气。");
-
-    const candidates = [];
-    for (const base of bases) {
-      for (const shoe of shoes) {
-        for (const outer of outers) {
-          const picked = [...base, shoe, outer].filter(Boolean);
-          const extras = (pools.accessory || []).filter((item) => !picked.some((chosen) => chosen.id === item.id));
-          extras.sort(
-            (a, b) =>
-              itemScore(b, occasion, temp) +
-                colorScore([...picked, b]) -
-                (itemScore(a, occasion, temp) + colorScore([...picked, a])) || a.id.localeCompare(b.id)
-          );
-          if (extras[0]) picked.push(extras[0]);
-          picked.sort((a, b) => order.indexOf(a.category) - order.indexOf(b.category) || a.id.localeCompare(b.id));
-          const score = picked.reduce((sum, item) => sum + itemScore(item, occasion, temp), 0) + colorScore(picked);
-          candidates.push({
-            id: outfitId(picked),
-            items: picked,
-            score: Math.round(score * 10) / 10,
-            warnings: buildWarnings(picked, occasion, temp),
-          });
+    if (snap.focus === "query" || snap.focus === "temp" || snap.focus === "occasion") {
+      var field = document.getElementById(snap.focus);
+      if (field) {
+        field.focus();
+        if (snap.sel != null && field.setSelectionRange) {
+          var pos = Math.min(snap.sel, field.value.length);
+          field.setSelectionRange(pos, pos);
         }
       }
     }
-    candidates.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
-    const selected = [];
-    const seen = new Set();
-    const seenTops = new Set();
-    for (const candidate of candidates) {
-      const key = coreKey(candidate.items);
-      if (seen.has(key)) continue;
-      const top = candidate.items.find((entry) => entry.category === "top");
-      if (top && seenTops.has(top.id)) continue;
-      selected.push(candidate);
-      seen.add(key);
-      if (top) seenTops.add(top.id);
-      if (selected.length === 2) break;
+    if (state.pendingScroll) {
+      var target = document.getElementById(state.pendingScroll);
+      state.pendingScroll = "";
+      if (target && target.scrollIntoView) target.scrollIntoView({ block: "start" });
     }
-    if (!selected.length) general.push("当前条件无法形成完整搭配。");
-    return { outfits: selected, general };
   }
 
-  function thumb(item, className) {
-    if (item.image) {
-      return `<img class="${className}" src="${esc(item.image)}" alt="${esc(item.name)}，${esc(item.image_kind || "")}" loading="lazy">`;
-    }
-    return `<div class="thumb-empty">暂无商品图（${esc(item.image_kind || "待补")}）</div>`;
+  function toneOf(status) {
+    var found = (state.data.statuses || []).find(function (row) { return row.id === status; });
+    return found ? found.tone : "neutral";
   }
 
-  function badges(item) {
-    const bits = [`<span class="badge ${esc(toneOf(item.status))}">${esc(statusLabel(item.status))}</span>`];
+  function displaySrc(item) {
+    if (!item) return null;
+    if (item.image_scope === "local-remote" || item.image_scope === "local-data") return Logic.localImageSrc(item.image);
+    return Logic.safeImage(item.image);
+  }
+
+  function thumb(item, large) {
+    var src = displaySrc(item);
+    var kind = item.image_kind ? "（" + esc(item.image_kind) + "）" : "";
+    if (!src) return '<div class="' + (large ? "big " : "thumb ") + 'thumb-empty">暂无商品图' + kind + "</div>";
+    var cls = large ? "big" : "thumb";
+    return '<img class="' + cls + '" src="' + esc(src) + '" alt="' + esc(item.name) + "，" + esc(item.image_kind || "商品图") + '" loading="lazy" decoding="async">';
+  }
+
+  function badges(item, dup) {
+    var bits = ['<span class="badge ' + esc(toneOf(item.status)) + '">' + esc(Logic.labelOf(state.data.statuses, item.status, item.status)) + "</span>"];
     if (item.lookalike) {
-      const kind = item.image_kind && item.image_kind.indexOf("同款") >= 0 ? item.image_kind : "同款候选，非已核同一件";
-      bits.push(`<span class="badge warning">${esc(kind)}</span>`);
+      var kind = item.image_kind && item.image_kind.indexOf("同款") !== -1 ? item.image_kind : "同款候选，非已核同一件";
+      bits.push('<span class="badge warning">' + esc(kind) + "</span>");
     }
-    if (isLowPriority(item) && item.status === "可穿") {
-      bits.push(`<span class="badge neutral">可穿·不优先</span>`);
+    if (item.status === "可穿") {
+      var evidence = Logic.ownershipEvidence(state.data, item);
+      bits.push(evidence.proven ? '<span class="badge success">已确认仍保留</span>' : '<span class="badge warning">需核对</span>');
     }
-    if (item.status === "已购·仅记录") bits.push(`<span class="badge neutral">记录项·不参与搭配</span>`);
-    return `<div class="badge-row">${bits.join("")}</div>`;
+    if (item.low_priority && item.status === "可穿") bits.push('<span class="badge neutral">可穿·不优先</span>');
+    if (item.status === "已购·仅记录") bits.push('<span class="badge neutral">不参与搭配</span>');
+    if (dup && dup.retiredTwin && item.status === "可穿") bits.push('<span class="badge danger">同款号已有淘汰记录，搭配跳过</span>');
+    else if (dup) bits.push('<span class="badge warning">可能是重复记录</span>');
+    if (state.local.overrides[item.id] && state.local.overrides[item.id].status) bits.push('<span class="badge accent">本机状态</span>');
+    if (!publicItem(item.id)) bits.push('<span class="badge accent">本机新增</span>');
+    return '<div class="badge-row">' + bits.join("") + "</div>";
   }
 
-  function renderItemCard(item) {
-    const selected = state.picked === item.id;
-    return `<button type="button" class="item-card" data-item="${esc(item.id)}" aria-pressed="${selected ? "true" : "false"}">
-      ${thumb(item, "thumb")}
-      <div class="body">
-        ${badges(item)}
-        <h3>${esc(item.name)}</h3>
-        <div class="sub">${esc(catLabel(item.category))}${item.color ? " · " + esc(colorLabel(item.color)) : ""}${item.brand ? " · " + esc(item.brand) : ""}</div>
-        <div class="src">来源 ${item.sources && item.sources.length ? esc(item.sources.join("、")) : "未标明平台"} · 主图 ${esc(item.image_kind || "未标明")}</div>
-      </div>
-    </button>`;
+  function renderCard(item, dup) {
+    var selected = state.picked === item.id;
+    var sub = [Logic.labelOf(state.data.categories, item.category, item.category)];
+    if (item.color) sub.push(Logic.labelOf(state.data.colors, item.color, item.color));
+    if (item.brand) sub.push(item.brand);
+    return '<button type="button" class="item-card" data-item="' + esc(item.id) + '" aria-pressed="' + (selected ? "true" : "false") + '">' +
+      thumb(item, false) +
+      '<span class="body">' + badges(item, dup) +
+      "<h3>" + esc(item.name) + "</h3>" +
+      '<span class="sub">' + esc(sub.join(" · ")) + "</span>" +
+      '<span class="src">来源 ' + esc(item.sources && item.sources.length ? item.sources.join("、") : "未标明平台") + " · 主图 " + esc(item.image_kind || "未标明") + "</span>" +
+      "</span></button>";
   }
 
-  function filteredItems(includeCulled) {
-    const q = (state.query || "").trim().toLowerCase();
-    return (state.data.items || []).filter((item) => {
-      if (!includeCulled && item.status === "已淘汰/不常穿") return false;
-      if (includeCulled && item.status !== "已淘汰/不常穿") return false;
-      if (state.cat !== "all" && item.category !== state.cat) return false;
-      if (!includeCulled) {
-        if (state.statusFilter === "wearable" && item.status !== "可穿") return false;
-        if (state.statusFilter === "record" && item.status !== "已购·仅记录") return false;
-        if (state.statusFilter === "womens" && item.status !== "女款待核") return false;
-        if (state.statusFilter === "all" && item.status === "已淘汰/不常穿") return false;
-      }
-      if (state.source !== "all") {
-        if (state.source === "none") {
-          if (item.sources && item.sources.length) return false;
-        } else if (!(item.sources || []).includes(state.source)) return false;
-      }
-      if (q) {
-        const blob = [item.name, item.brand, item.note, item.retire_reason, item.image_kind, (item.sources || []).join(" ")]
-          .join(" ")
-          .toLowerCase();
-        if (!blob.includes(q)) return false;
-      }
-      return true;
-    });
+  function detail(item, dup) {
+    if (!item) return "";
+    var pub = publicItem(item.id);
+    var lines = [];
+    if (pub && state.local.overrides[item.id] && state.local.overrides[item.id].status) {
+      lines.push("公开清单里是「" + pub.status + "」。当前这台设备上是「" + item.status + "」，没有写回公开仓库。");
+    } else if (!pub) {
+      lines.push("这件只在本机导入的数据里，不在公开清单中。");
+    }
+    if (isBlocked(item)) lines.push("名称里有乐福或深咖，即使标成可穿也不会进入搭配。");
+    var evidence = Logic.ownershipEvidence(state.data, item);
+    if (item.status === "可穿" || item._retainLocal) lines.push(evidence.reason);
+    var actions = "";
+    if (item.status === "可穿" && item._retainLocal === "yes") {
+      actions += '<button type="button" class="quiet" data-retain="clear" data-id="' + esc(item.id) + '">撤销本机保留确认</button>';
+    } else if (item.status === "可穿" && evidence.proven) {
+      actions += '<button type="button" class="quiet" data-retain="no" data-id="' + esc(item.id) + '">仅在本机撤销这条保留确认</button>';
+    } else if (item.status === "可穿") {
+      actions += '<button type="button" class="quiet" data-retain="yes" data-id="' + esc(item.id) + '">仅在本机确认现在仍保留、可穿</button>';
+    }
+    if (item.status === "可穿") {
+      actions += '<button type="button" class="quiet" data-local-status="已淘汰/不常穿" data-id="' + esc(item.id) + '">仅在本机标为已淘汰</button>';
+    } else if (item.status === "已淘汰/不常穿") {
+      actions += '<button type="button" class="quiet" data-local-status="可穿" data-id="' + esc(item.id) + '">仅在本机恢复为可穿</button>';
+    }
+    if (pub && state.local.overrides[item.id] && state.local.overrides[item.id].status) {
+      actions += '<button type="button" class="quiet" data-action="undo-status" data-id="' + esc(item.id) + '">撤销本机状态</button>';
+    }
+    if (!pub) {
+      var armed = state.armRemove === item.id;
+      actions += '<button type="button" class="quiet" data-action="remove-extra" data-id="' + esc(item.id) + '">' + (armed ? "再点一次，从本机移除" : "从本机新增里移除") + "</button>";
+    }
+    return '<div class="sheet" id="detail-sheet">' +
+      '<div class="sheet-head"><h2 id="detail-title">' + esc(item.name) + '</h2><button type="button" class="quiet" data-action="close-detail">关闭</button></div>' +
+      thumb(item, true) +
+      badges(item, dup) +
+      '<p class="meta">' + esc(Logic.labelOf(state.data.categories, item.category, item.category)) +
+      (item.brand ? " · " + esc(item.brand) : "") +
+      (item.color ? " · " + esc(Logic.labelOf(state.data.colors, item.color, item.color)) : "") + "</p>" +
+      '<p class="meta">来源 ' + esc(item.sources && item.sources.length ? item.sources.join("、") : "未标明平台") + " · 主图 " + esc(item.image_kind || "未标明") + "</p>" +
+      (item.lookalike ? '<p class="warn">主图是同款参考或同款候选，不能当成已经核对过的同一件。</p>' : "") +
+      (item.retire_reason ? "<p>淘汰原因：" + esc(item.retire_reason) + "</p>" : "") +
+      "<p>" + esc(item.note || "无更多备注。") + "</p>" +
+      (lines.length ? '<p class="meta">' + esc(lines.join("")) + "</p>" : "") +
+      '<div class="row-actions">' + actions + "</div></div>";
   }
 
-  function renderOutfit(outfit, index) {
-    const title = "方案 " + (index + 1);
-    const pieces = outfit.items
-      .map((item) => {
-        return `<div class="outfit-piece">
-          ${item.image ? `<img src="${esc(item.image)}" alt="${esc(item.name)}，${esc(item.image_kind || "")}">` : `<div class="thumb-empty">${esc(item.image_kind || "暂无图")}</div>`}
-          <div class="name">${esc(catLabel(item.category))}：${esc(item.name)}</div>
-          <div class="src">${esc(item.image_kind || "")}${item.lookalike ? " · 主图为同款参考或同款候选，不是已核同一件" : ""}</div>
-        </div>`;
-      })
-      .join("");
-    const placeholder = state.data.tryon_placeholder || "AI 上身预览需用户私下提供照片，不公开。";
-    const warnings = (outfit.warnings || []).map((w) => `<p class="warn">${esc(w)}</p>`).join("");
-    return `<div class="outfit">
-      <h3>${esc(title)}</h3>
-      <div class="outfit-row">
-        ${pieces}
-        <div class="tryon-slot">
-          <div class="box">${esc(placeholder)}</div>
-          <div class="name">AI 上身预览</div>
-        </div>
-      </div>
-      ${warnings}
-    </div>`;
+  function isBlocked(item) {
+    return Logic.isLoafer(item) || Logic.isDeepCoffee(item);
+  }
+
+  function outfitView(outfit) {
+    var pieces = outfit.items.map(function (item) {
+      var src = displaySrc(item);
+      var media = src
+        ? '<img src="' + esc(src) + '" alt="' + esc(item.name) + "，" + esc(item.image_kind || "") + '" loading="lazy" decoding="async">'
+        : '<div class="thumb-empty">' + esc(item.image_kind || "暂无商品图") + "</div>";
+      return '<div class="outfit-piece">' + media +
+        '<div class="name">' + esc(Logic.labelOf(state.data.categories, item.category, item.category)) + "：" + esc(item.name) + "</div>" +
+        '<div class="src">' + esc(item.image_kind || "主图未标明") + (item.lookalike ? " · 不能当成已核同一件" : "") + "</div></div>";
+    }).join("");
+    var reasons = (outfit.reasons || []).map(function (reason) { return "<li>" + esc(reason) + "</li>"; }).join("");
+    var warnings = (outfit.warnings || []).map(function (warning) { return '<p class="warn">' + esc(warning) + "</p>"; }).join("");
+    return '<article class="outfit"><h3>' + esc(outfit.title) + "</h3>" +
+      '<p class="caption">' + (outfit.warmthJudged
+        ? (outfit.role === "primary" ? "这套的衣服都有保留证据，并且过了所填气温的厚薄门槛。" : "另一套同样过了保留证据和厚薄门槛。")
+        : "温度未知，只列出已确认仍保留的单品，不作保暖判断。") + "</p>" +
+      '<div class="outfit-row">' + pieces +
+      '<div class="tryon-slot"><div class="box">不能生成上身图，也不是模拟。</div><div class="name">没有上身预览</div></div></div>' +
+      '<ul class="reasons">' + reasons + "</ul>" + warnings + "</article>";
+  }
+
+  function previewBlock() {
+    var preview = state.importPreview;
+    if (!preview && !state.importError) return "";
+    if (state.importError) return '<div class="callout warning" role="alert"><p>' + esc(state.importError) + "</p></div>";
+    function names(list) {
+      return list.slice(0, 5).map(function (entry) { return entry.name || entry.id || entry.reason; }).join("、");
+    }
+    return '<div class="callout info"><p class="lead">导入预览，还没有写入</p><ul>' +
+      "<li>读到 " + preview.incomingCount + " 条。</li>" +
+      "<li>将新增 " + preview.added.length + " 件" + (preview.added.length ? "：" + esc(names(preview.added)) : "") + "。</li>" +
+      "<li>只补空字段 " + preview.filled.length + " 件。已有名称、图片和状态不会被安全合并盖掉。</li>" +
+      "<li>导入文件里状态不同的有 " + preview.statusChanges.length + " 件。只有点下面第二个按钮才会改本机状态。</li>" +
+      "<li>文件里没有、但仍会保留的现有单品：" + preview.keptDespiteOmission + " 件。</li>" +
+      "<li>拒绝 " + preview.rejected.length + " 条" + (preview.rejected.length ? "：" + esc(names(preview.rejected)) : "") + "。</li>" +
+      "<li>图片未采用 " + preview.imageDropped + " 处。外链或上传图如果留下，会写明只在本机。</li>" +
+      ((preview.notices || []).slice(0, 8).map(function (notice) {
+        return "<li>" + esc((notice.id ? notice.id + "：" : "") + (notice.action || "") + " " + (notice.reason || "")) + "</li>";
+      }).join("")) +
+      ((preview.notices || []).length > 8 ? "<li>还有 " + ((preview.notices || []).length - 8) + " 条处理说明，没有省略原因，只是这里不全部展开。</li>" : "") +
+      "</ul>" +
+      '<div class="row-actions">' +
+      '<button type="button" class="primary" data-action="apply-import" data-mode="safe">合并：只补新单品和空字段</button>' +
+      '<button type="button" class="quiet" data-action="apply-import" data-mode="status">合并并采用导入的状态（仍不删除）</button>' +
+      '<button type="button" class="quiet" data-action="cancel-import">取消这次导入</button></div></div>';
   }
 
   function render() {
-    const data = state.data;
-    const counts = data.counts || {};
-    const links = data.links || {};
-    const prefs = data.preferences || {};
-    const selected = state.picked ? itemById(state.picked) : null;
-    const temp = parseTemp();
-    const suggestion = state.generated ? recommendOutfits(state.occasion, temp) : null;
-    const gridItems = filteredItems(false);
-    const culledItems = filteredItems(true);
-
-    const occasionOptions = (data.occasions || [])
-      .map((o) => `<option value="${esc(o.id)}"${o.id === state.occasion ? " selected" : ""}>${esc(o.label)}</option>`)
-      .join("");
-    const catChips = [{ id: "all", label: "全部分类" }]
-      .concat(data.categories || [])
-      .map(
-        (c) =>
-          `<button type="button" data-cat="${esc(c.id)}" aria-pressed="${state.cat === c.id ? "true" : "false"}">${esc(c.label)}</button>`
-      )
-      .join("");
-    const statusChips = [
-      { id: "wearable", label: "可穿" },
-      { id: "record", label: "已购·仅记录" },
-      { id: "womens", label: "女款待核" },
-      { id: "all", label: "全部（不含已淘汰）" },
-    ]
-      .map(
-        (s) =>
-          `<button type="button" data-status="${esc(s.id)}" aria-pressed="${state.statusFilter === s.id ? "true" : "false"}">${esc(s.label)}</button>`
-      )
-      .join("");
-    const sourceChips = [{ id: "all", label: "全部来源" }, { id: "京东", label: "京东" }, { id: "淘宝", label: "淘宝" }, { id: "得物", label: "得物" }, { id: "免税店", label: "免税店" }, { id: "其他", label: "其他" }, { id: "none", label: "未标明平台" }]
-      .map(
-        (s) =>
-          `<button type="button" data-source="${esc(s.id)}" aria-pressed="${state.source === s.id ? "true" : "false"}">${esc(s.label)}</button>`
-      )
-      .join("");
-
-    const rules = (prefs.rules || []).map((r) => `<li>${esc(r)}</li>`).join("");
-
-    root.innerHTML = `
-      <div class="wrap">
-        <header class="hero">
-          <h1>${esc(data.title || "我的衣橱")}</h1>
-          <p class="summary">${esc(data.summary || "")}</p>
-          <div class="meta-row">
-            <span>更新于 ${esc(data.last_updated || "")}</span>
-            ${links.raw ? `<a href="${esc(links.raw)}">原始数据</a>` : ""}
-            ${links.repo ? `<a href="${esc(links.repo)}">GitHub 仓库</a>` : ""}
-          </div>
-        </header>
-
-        <div class="sticky-controls">
-          <div class="seg" role="tablist">
-            <button type="button" data-tab="suggest" aria-pressed="${state.tab === "suggest" ? "true" : "false"}">搭配</button>
-            <button type="button" data-tab="grid" aria-pressed="${state.tab === "grid" ? "true" : "false"}">衣橱</button>
-          </div>
-        </div>
-
-        <div class="metrics four">
-          <div class="metric"><b>${esc(counts.total || 0)}</b><span>全部单品</span></div>
-          <div class="metric success"><b>${esc(counts.wearable || 0)}</b><span>可穿，可搭配</span></div>
-          <div class="metric"><b>${esc(counts.record || 0)}</b><span>已购·仅记录</span></div>
-          <div class="metric warning"><b>${esc(counts.retired || 0)}</b><span>已淘汰/不常穿</span></div>
-        </div>
-
-        <section class="block">
-          <h2>穿着偏好</h2>
-          <p class="caption">${esc(data.one_liner || "")}</p>
-          <div class="callout info">
-            <p class="lead">${esc(prefs.text || "")}</p>
-            <ul>${rules}</ul>
-          </div>
-        </section>
-
-        ${
-          state.tab === "suggest"
-            ? `<section class="block">
-                <h2>按场合生成搭配</h2>
-                <p class="caption">只使用已确认可穿的单品。已购·仅记录、已淘汰/不常穿和女款不进入方案。不穿乐福鞋；避开深咖色，其他棕或卡其可用。</p>
-                <div class="controls-row">
-                  <label>场合
-                    <select id="occasion">${occasionOptions}</select>
-                  </label>
-                  <label>气温（℃，可空）
-                    <input id="temp" type="number" inputmode="numeric" placeholder="选填" value="${esc(state.tempText)}">
-                  </label>
-                  <button type="button" class="primary" id="generate">生成搭配</button>
-                </div>
-                ${
-                  suggestion
-                    ? `${(suggestion.general || []).map((g) => `<div class="callout warning" style="margin-top:1rem"><p>${esc(g)}</p></div>`).join("")}
-                       ${suggestion.outfits.map((outfit, i) => renderOutfit(outfit, i)).join("") || ""}`
-                    : `<p class="caption" style="margin-top:1rem">选好场合后点「生成搭配」。公开页不展示本人上身照片。</p>`
-                }
-              </section>`
-            : `<section class="block">
-                <h2>单品列表</h2>
-                <p class="caption">正在显示 ${gridItems.length} 件。可穿 ${esc(counts.wearable || 0)} 件，已购·仅记录 ${esc(counts.record || 0)} 件，已淘汰/不常穿 ${esc(counts.retired || 0)} 件，女款待核 ${esc(counts.womens || 0)} 件。点开卡片可看备注。</p>
-                <div class="controls-row">
-                  <input id="query" type="search" placeholder="搜索名称、品牌或备注" value="${esc(state.query)}">
-                </div>
-                <div class="chips" id="cat-chips">${catChips}</div>
-                <div class="chips" id="status-chips">${statusChips}</div>
-                <div class="chips" id="source-chips">${sourceChips}</div>
-                <div class="grid">${gridItems.map(renderItemCard).join("") || `<p class="caption">没有符合筛选的单品。</p>`}</div>
-                ${
-                  selected && selected.status !== "已淘汰/不常穿"
-                    ? `<div class="detail" style="margin-top:1rem">
-                        ${selected.image ? `<img class="big" src="${esc(selected.image)}" alt="${esc(selected.name)}，${esc(selected.image_kind || "")}">` : `<div class="thumb-empty">暂无商品图（${esc(selected.image_kind || "待补")}）</div>`}
-                        <div>
-                          ${badges(selected)}
-                          <h2 style="margin-top:0.5rem">${esc(selected.name)}</h2>
-                          <p class="meta">${esc(catLabel(selected.category))}${selected.brand ? " · " + esc(selected.brand) : ""}${selected.color ? " · " + esc(colorLabel(selected.color)) : ""}</p>
-                          <p class="meta">来源 ${selected.sources && selected.sources.length ? esc(selected.sources.join("、")) : "未标明平台"} · 主图 ${esc(selected.image_kind || "未标明")}</p>
-                          ${selected.lookalike ? `<div style="margin-top:8px"><span class="badge warning">主图为同款参考或同款候选，不能当成已经核对过的同一件</span></div>` : ""}
-                          <p style="margin:0.7rem 0 0">${esc(selected.note || "无更多备注。")}</p>
-                        </div>
-                      </div>`
-                    : ""
-                }
-                <button type="button" class="quiet" id="toggle-culled">${state.showCulled ? "收起" : "展开"}已淘汰/不常穿（可恢复）· ${esc(counts.retired || 0)} 件</button>
-                ${
-                  state.showCulled
-                    ? `<div class="grid" style="margin-top:0.9rem">${culledItems.map(renderItemCard).join("")}</div>
-                       ${
-                         selected && selected.status === "已淘汰/不常穿"
-                           ? `<div class="detail" style="margin-top:1rem">
-                               ${selected.image ? `<img class="big" src="${esc(selected.image)}" alt="${esc(selected.name)}，${esc(selected.image_kind || "")}">` : `<div class="thumb-empty">暂无商品图</div>`}
-                               <div>
-                                 ${badges(selected)}
-                                 <h2 style="margin-top:0.5rem">${esc(selected.name)}</h2>
-                                 <p class="meta">${esc(catLabel(selected.category))}${selected.brand ? " · " + esc(selected.brand) : ""}</p>
-                                 ${selected.retire_reason ? `<p style="margin:0.7rem 0 0">淘汰原因：${esc(selected.retire_reason)}</p>` : ""}
-                                 <p style="margin:0.7rem 0 0">${esc(selected.note || "")}</p>
-                               </div>
-                             </div>`
-                           : ""
-                       }`
-                    : ""
-                }
-              </section>`
-        }
-
-        <p class="footer-links">
-          ${esc(data.privacy || "")}<br>
-          ${esc(data.disclaimer || "")}<br>
-          ${links.pages ? `<a href="${esc(links.pages)}">在线页面</a> · ` : ""}
-          ${links.raw ? `<a href="${esc(links.raw)}">data.json</a> · ` : ""}
-          ${links.repo ? `<a href="${esc(links.repo)}">仓库</a> · ` : ""}
-          ${links.ai_instructions ? `<a href="${esc(links.ai_instructions)}">给 AI 的说明</a>` : ""}
-        </p>
-      </div>
-      <button type="button" class="top-btn" id="to-top">回到顶部</button>
-    `;
-
-    bind();
-  }
-
-  function bind() {
-    root.querySelectorAll("[data-tab]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.tab = btn.getAttribute("data-tab");
-        render();
-      });
+    var snap = capture();
+    var data = state.data;
+    var dup = Logic.duplicateIndex(state.items);
+    var links = data.links || {};
+    var prefs = data.preferences || {};
+    var suggestion = null;
+    var suggestError = "";
+    if (state.generated) {
+      try {
+        suggestion = Logic.recommendOutfits(data, state.items, {
+          occasion: state.occasion,
+          tempText: state.tempText,
+          withAccessory: state.withAccessory
+        });
+      } catch (err) {
+        suggestError = "搭配没有生成：" + (err && err.message ? err.message : err);
+      }
+    }
+    var gridItems = Logic.filterItems(data, state.items, {
+      query: state.query,
+      category: state.cat,
+      statusFilter: state.statusFilter === "review" ? "wearable" : state.statusFilter,
+      source: state.source,
+      culledOnly: false
     });
-    const occasion = document.getElementById("occasion");
-    if (occasion) {
-      occasion.addEventListener("change", (e) => {
-        state.occasion = e.target.value;
-      });
+    if (state.statusFilter === "review") {
+      gridItems = gridItems.filter(function (item) { return !Logic.ownershipEvidence(data, item).proven; });
     }
-    const temp = document.getElementById("temp");
-    if (temp) {
-      temp.addEventListener("input", (e) => {
-        state.tempText = e.target.value;
-      });
-    }
-    const generate = document.getElementById("generate");
-    if (generate) {
-      generate.addEventListener("click", () => {
-        state.generated = true;
-        render();
-      });
-    }
-    const query = document.getElementById("query");
-    if (query) {
-      query.addEventListener("input", (e) => {
-        state.query = e.target.value;
-        render();
-        const again = document.getElementById("query");
-        if (again) {
-          again.focus();
-          const len = again.value.length;
-          again.setSelectionRange(len, len);
-        }
-      });
-    }
-    const catChips = document.getElementById("cat-chips");
-    if (catChips) {
-      catChips.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-cat]");
-        if (!btn) return;
-        state.cat = btn.getAttribute("data-cat");
-        render();
-      });
-    }
-    const statusChips = document.getElementById("status-chips");
-    if (statusChips) {
-      statusChips.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-status]");
-        if (!btn) return;
-        state.statusFilter = btn.getAttribute("data-status");
-        render();
-      });
-    }
-    const sourceChips = document.getElementById("source-chips");
-    if (sourceChips) {
-      sourceChips.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-source]");
-        if (!btn) return;
-        state.source = btn.getAttribute("data-source");
-        render();
-      });
-    }
-    root.querySelectorAll("[data-item]").forEach((el) => {
-      el.addEventListener("click", () => {
-        const id = el.getAttribute("data-item");
-        state.picked = state.picked === id ? null : id;
-        render();
-      });
+    var culledItems = Logic.filterItems(data, state.items, {
+      query: state.query,
+      category: state.cat,
+      source: state.source,
+      culledOnly: true
     });
-    const toggle = document.getElementById("toggle-culled");
-    if (toggle) {
-      toggle.addEventListener("click", () => {
-        state.showCulled = !state.showCulled;
-        render();
-      });
+    var selected = state.picked ? itemById(state.picked) : null;
+    var counts = state.counts || Logic.countsOf([]);
+    var localNote = Logic.localIsEmpty(state.local) ? "" : "件数含本机修改，公开清单没有改。";
+    var countWarn = Logic.localIsEmpty(state.local) && Logic.countsDiffer(Logic.countsOf(data.items || []), data.counts);
+
+    function chip(attr, id, label, pressed) {
+      return '<button type="button" data-' + attr + '="' + esc(id) + '" aria-pressed="' + (pressed ? "true" : "false") + '">' + esc(label) + "</button>";
     }
-    const top = document.getElementById("to-top");
-    if (top) top.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    var occasionOptions = (data.occasions || []).map(function (row) {
+      return '<option value="' + esc(row.id) + '"' + (row.id === state.occasion ? " selected" : "") + ">" + esc(row.label) + "</option>";
+    }).join("");
+    var catChips = [{ id: "all", label: "全部分类" }].concat(data.categories || []).map(function (row) {
+      return chip("cat", row.id, row.label, state.cat === row.id);
+    }).join("");
+    var statusChips = [
+      ["wearable", "可穿"],
+      ["review", "需核对"],
+      ["record", "已购·仅记录"],
+      ["womens", "女款待核"],
+      ["all", "全部（不含已淘汰）"]
+    ].map(function (row) { return chip("status", row[0], row[1], state.statusFilter === row[0]); }).join("");
+    var sourceChips = [
+      ["all", "全部来源"],
+      ["京东", "京东"],
+      ["淘宝", "淘宝"],
+      ["得物", "得物"],
+      ["免税店", "免税店"],
+      ["其他", "其他"],
+      ["none", "未标明平台"]
+    ].map(function (row) { return chip("source", row[0], row[1], state.source === row[0]); }).join("");
+    var rules = (prefs.rules || []).map(function (rule) { return "<li>" + esc(rule) + "</li>"; }).join("");
+    var catCount = {};
+    gridItems.forEach(function (item) { catCount[item.category] = (catCount[item.category] || 0) + 1; });
+    var catSummary = (data.categories || []).filter(function (row) { return catCount[row.id]; }).map(function (row) {
+      return row.label + " " + catCount[row.id];
+    }).join(" · ");
+
+    var panel = "";
+    if (state.tab === "suggest") {
+      var resultHtml = '<p class="caption result-note">选好场合后点「生成搭配」。留空气温就不会假设今天冷热。公开页不能生成上身图。</p>';
+      if (suggestError) resultHtml = '<div class="callout warning" role="alert"><p>' + esc(suggestError) + "</p></div>";
+      else if (suggestion) {
+        var notes = (suggestion.general || []).map(function (line) { return "<li>" + esc(line) + "</li>"; }).join("");
+        var held = (suggestion.heldBack || []).map(function (entry) {
+          return '<li><button type="button" class="text-button" data-held="' + esc(entry.id) + '">' + esc(entry.name) + "</button>：" + esc(entry.reason) + "</li>";
+        }).join("");
+        var gapHtml = (suggestion.gaps || []).map(function (line) { return "<li>" + esc(line) + "</li>"; }).join("");
+        resultHtml = '<div id="results" aria-live="polite"><div class="callout ' + (suggestion.outfits.length ? "info" : "warning") + '"><ul>' + notes + gapHtml + "</ul></div>" +
+          (suggestion.outfits.length ? suggestion.outfits.map(outfitView).join("") : '<p class="warn">没有拼成一套。缺的单品不会用购买记录或款号核实来顶上。</p>') +
+          (held ? '<div class="callout warning"><p class="lead">这些可穿记录没有自动搭配</p><ul>' + held + "</ul></div>" : "") +
+          "</div>";
+      }
+      panel = '<section class="block" id="panel" role="tabpanel" aria-labelledby="tab-suggest"><h2>按场合生成搭配</h2>' +
+        '<p class="caption">自动搭配只使用备注写明「已确认仍在、可穿用」，或你在本机确认过的单品。状态为可穿本身不算已经证实。没有填写气温时不作保暖判断。气温过不了厚薄门槛，或没有足够的已确认单品，就明确说证据不足，不硬拼。</p>' +
+        '<div class="controls-row"><label for="occasion">场合 <select id="occasion">' + occasionOptions + "</select></label>" +
+        '<label for="temp">气温（℃，可空） <input id="temp" type="number" inputmode="decimal" placeholder="不猜测" value="' + esc(state.tempText) + '"></label>' +
+        '<label class="check" for="with-accessory"><input id="with-accessory" type="checkbox"' + (state.withAccessory ? " checked" : "") + "> 加入一件配饰</label>" +
+        '<button type="button" class="primary" data-action="generate">生成搭配</button></div>' +
+        '<p class="caption">配饰默认关闭。打开后也不会选光学镜；冬帽只在你填写的低温里考虑。参考气温 ' + esc(data.scoring && data.scoring.default_temp != null ? data.scoring.default_temp : "无") + "℃ 只写在清单里，不会自动填进上面。</p>" +
+        resultHtml + "</section>";
+    } else if (state.tab === "grid") {
+      panel = '<section class="block" id="panel" role="tabpanel" aria-labelledby="tab-grid"><h2>单品列表</h2>' +
+        '<p class="caption">正在显示 ' + gridItems.length + " 件" + (catSummary ? "（" + esc(catSummary) + "）" : "") + "。可穿 " + counts.wearable + "，已购·仅记录 " + counts.record + "，已淘汰/不常穿 " + counts.retired + "，女款待核 " + counts.womens + "。点卡片看备注。</p>" +
+        '<div class="controls-row"><input id="query" type="search" enterkeyhint="search" placeholder="搜索名称、品牌、分类或备注" value="' + esc(state.query) + '"></div>' +
+        '<div class="chips" id="cat-chips" role="group" aria-label="分类">' + catChips + "</div>" +
+        '<div class="chips" id="status-chips" role="group" aria-label="状态">' + statusChips + "</div>" +
+        '<div class="chips" id="source-chips" role="group" aria-label="来源">' + sourceChips + "</div>" +
+        (selected ? detail(selected, dup.get(selected.id)) : "") +
+        '<div class="grid">' + (gridItems.map(function (item) { return renderCard(item, dup.get(item.id)); }).join("") || '<p class="caption">没有符合筛选的单品。可以清空搜索或改筛选。已淘汰的在下面单独展开，没有被删除。</p>') + "</div>" +
+        '<button type="button" class="quiet" data-action="toggle-culled" aria-expanded="' + (state.showCulled ? "true" : "false") + '">' + (state.showCulled ? "收起" : "展开") + "已淘汰/不常穿（可恢复）· " + counts.retired + " 件</button>" +
+        (state.showCulled
+          ? '<div class="grid grid-gap">' + (culledItems.map(function (item) { return renderCard(item, dup.get(item.id)); }).join("") || '<p class="caption">已淘汰分组里没有符合当前搜索和分类的单品。分组还在，没有删除。</p>') + "</div>"
+          : "") +
+        "</section>";
+    } else {
+      panel = '<section class="block" id="panel" role="tabpanel" aria-labelledby="tab-data"><h2>本机数据</h2>' +
+        '<p class="caption">公开清单来自 data.json。这里的修改只留在这台设备，不会上传，也不会改 GitHub 上的文件。不要把本人照片、尺码、身高体重、电话或订单号导入进来。</p>' +
+        (state.storageError ? '<div class="callout warning" role="alert"><p>' + esc(state.storageError) + "</p></div>" : "") +
+        '<div class="row-actions"><button type="button" class="primary" data-action="export">导出当前衣橱</button></div>' +
+        '<div class="row-actions"><button type="button" class="primary" data-action="pick-file">选择 JSON 文件</button></div>' +
+        '<input id="import-file" class="sr-only" type="file" accept="application/json,.json">' +
+        previewBlock() +
+        '<div class="callout"><p class="lead">恢复公开清单</p><p>会清掉这台设备上的状态修改和导入。公开仓库不受影响。清掉之前可以先导出。</p>' +
+        '<label class="check" for="restore-arm"><input id="restore-arm" type="checkbox"' + (state.restoreArmed ? " checked" : "") + "> 我确认清除本机修改</label>" +
+        '<button type="button" class="quiet" data-action="restore"' + (state.restoreArmed ? "" : " disabled") + ">清除本机修改并恢复公开清单</button></div></section>";
+    }
+
+    function link(url, label) {
+      var safe = Logic.safeHttpUrl(url);
+      return safe ? '<a href="' + esc(safe) + '">' + esc(label) + "</a>" : "";
+    }
+
+    root.innerHTML = '<a class="skip" href="#panel">跳到内容</a><div class="wrap">' +
+      '<header class="hero"><h1>' + esc(data.title || "我的衣橱") + "</h1>" +
+      '<p class="summary">' + esc(data.summary || "") + "</p>" +
+      '<p class="one-liner">' + esc(data.one_liner || "") + "</p>" +
+      '<div class="meta-row"><span>页面 ' + esc(data.last_updated || "") + "</span>" +
+      '<span>清单核对 ' + esc(data.data_as_of || "") + "</span>" +
+      link(links.raw, "原始数据") + link(links.repo, "GitHub 仓库") + "</div></header>" +
+      '<div class="sticky-controls"><div class="seg" role="tablist" aria-label="衣橱分页">' +
+      '<button type="button" id="tab-suggest" role="tab" data-tab="suggest" aria-selected="' + (state.tab === "suggest" ? "true" : "false") + '" aria-controls="panel">搭配</button>' +
+      '<button type="button" id="tab-grid" role="tab" data-tab="grid" aria-selected="' + (state.tab === "grid" ? "true" : "false") + '" aria-controls="panel">衣橱</button>' +
+      '<button type="button" id="tab-data" role="tab" data-tab="data" aria-selected="' + (state.tab === "data" ? "true" : "false") + '" aria-controls="panel">本机</button>' +
+      "</div></div>" +
+      '<div class="metrics four">' +
+      '<div class="metric"><b>' + counts.total + "</b><span>全部单品</span></div>" +
+      '<div class="metric success"><b>' + counts.wearable + "</b><span>状态为可穿</span></div>" +
+      '<div class="metric"><b>' + counts.record + "</b><span>已购·仅记录</span></div>" +
+      '<div class="metric warning"><b>' + counts.retired + "</b><span>已淘汰/不常穿</span></div></div>" +
+      (localNote ? '<p class="caption local-note">' + esc(localNote) + "</p>" : "") +
+      (countWarn ? '<p class="warn">清单里的 counts 和单品数量不一致。页面数字按单品现算。</p>' : "") +
+      '<details class="block prefs"><summary>穿着偏好和整理规则</summary>' +
+      '<div class="callout info"><p class="lead">' + esc(prefs.text || "") + "</p><ul>" + rules + "</ul></div></details>" +
+      panel +
+      '<p class="footer-links">' + esc(data.privacy || "") + "<br>" + esc(data.disclaimer || "") + "<br>" +
+      [link(links.pages, "在线页面"), link(links.raw, "data.json"), link(links.repo, "仓库"), link(links.ai_instructions, "给 AI 的说明")].filter(Boolean).join(" · ") +
+      "</p></div>" +
+      '<button type="button" class="top-btn" data-action="top">回到顶部</button>';
+
+    document.body.classList.toggle("has-sheet", state.tab === "grid" && !!selected);
+    document.body.classList.toggle("tab-suggest", state.tab === "suggest");
+    restore(snap);
   }
 
-  function bootError(msg) {
-    root.innerHTML = `<p class="error">${esc(msg)}</p>`;
+  function setRetain(id, value) {
+    if (!state.local.overrides[id]) state.local.overrides[id] = {};
+    if (value === "clear") delete state.local.overrides[id].retain;
+    else state.local.overrides[id].retain = value;
+    if (!state.local.overrides[id].status && !state.local.overrides[id].retain && !state.local.overrides[id].fill && !state.local.overrides[id].localImage) {
+      delete state.local.overrides[id];
+    }
+    persist();
+    recompute();
+    render();
   }
+
+  function setStatus(id, status) {
+    var pub = publicItem(id);
+    if (pub) {
+      if (!state.local.overrides[id]) state.local.overrides[id] = {};
+      if (status === pub.status) {
+        delete state.local.overrides[id].status;
+        delete state.local.overrides[id].retire_reason;
+        if (!state.local.overrides[id].fill) delete state.local.overrides[id];
+      } else {
+        state.local.overrides[id].status = status;
+        if (status === "已淘汰/不常穿") state.local.overrides[id].retire_reason = "仅在本机标为已淘汰/不常穿，未写入公开清单。";
+      }
+    } else {
+      var extra = (state.local.extraItems || []).find(function (item) { return item.id === id; });
+      if (!extra) return;
+      extra.status = status;
+      if (status === "已淘汰/不常穿") extra.retire_reason = "仅在本机标为已淘汰/不常穿，未写入公开清单。";
+    }
+    persist();
+    recompute();
+    render();
+  }
+
+  root.addEventListener("click", function (event) {
+    var target = event.target.closest("button, a");
+    if (!target || !root.contains(target)) return;
+    if (target.hasAttribute("data-tab")) {
+      state.tab = target.getAttribute("data-tab");
+      state.forceTop = true;
+      render();
+      return;
+    }
+    if (target.hasAttribute("data-cat")) {
+      state.cat = target.getAttribute("data-cat");
+      render();
+      return;
+    }
+    if (target.hasAttribute("data-status")) {
+      state.statusFilter = target.getAttribute("data-status");
+      render();
+      return;
+    }
+    if (target.hasAttribute("data-source")) {
+      state.source = target.getAttribute("data-source");
+      render();
+      return;
+    }
+    if (target.hasAttribute("data-item")) {
+      var id = target.getAttribute("data-item");
+      state.picked = state.picked === id ? null : id;
+      state.armRemove = "";
+      render();
+      return;
+    }
+    if (target.hasAttribute("data-held")) {
+      state.tab = "grid";
+      state.picked = target.getAttribute("data-held");
+      state.statusFilter = "wearable";
+      state.forceTop = true;
+      render();
+      return;
+    }
+    if (target.hasAttribute("data-local-status")) {
+      setStatus(target.getAttribute("data-id"), target.getAttribute("data-local-status"));
+      return;
+    }
+    if (target.hasAttribute("data-retain")) {
+      setRetain(target.getAttribute("data-id"), target.getAttribute("data-retain"));
+      return;
+    }
+    var action = target.getAttribute("data-action");
+    if (action === "generate") {
+      state.generated = true;
+      state.pendingScroll = "results";
+      render();
+    } else if (action === "toggle-culled") {
+      state.showCulled = !state.showCulled;
+      render();
+    } else if (action === "close-detail") {
+      state.picked = null;
+      state.armRemove = "";
+      render();
+    } else if (action === "undo-status") {
+      setStatus(target.getAttribute("data-id"), (publicItem(target.getAttribute("data-id")) || {}).status);
+    } else if (action === "remove-extra") {
+      var extraId = target.getAttribute("data-id");
+      if (state.armRemove !== extraId) {
+        state.armRemove = extraId;
+        render();
+        return;
+      }
+      state.local.extraItems = (state.local.extraItems || []).filter(function (item) { return item.id !== extraId; });
+      delete state.local.overrides[extraId];
+      state.armRemove = "";
+      state.picked = null;
+      persist();
+      recompute();
+      render();
+    } else if (action === "top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (action === "pick-file") {
+      var picker = document.getElementById("import-file");
+      if (picker) picker.click();
+    } else if (action === "export") {
+      var payload = {
+        exported_from: "wardrobe-local",
+        notice: "可能含本机修改。不要把个人照片、尺码、身高体重、电话或订单号写进公开仓库。",
+        items: state.items
+      };
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.href = url;
+      link.download = "wardrobe-backup.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } else if (action === "apply-import" && state.importPreview) {
+      var next = target.getAttribute("data-mode") === "status" ? state.importPreview.statusNext : state.importPreview.safeNext;
+      state.local = next;
+      persist();
+      state.importPreview = null;
+      recompute();
+      render();
+    } else if (action === "cancel-import") {
+      state.importPreview = null;
+      state.importError = "";
+      render();
+    } else if (action === "restore") {
+      if (!state.restoreArmed) return;
+      var cleared = Logic.emptyLocal();
+      var wrote = Logic.writeLocal(window.localStorage, cleared);
+      if (!wrote.ok) {
+        state.storageError = wrote.error + " 本机备份没有被清掉。";
+        render();
+        return;
+      }
+      state.local = cleared;
+      state.storageError = "";
+      state.restoreArmed = false;
+      state.importPreview = null;
+      state.picked = null;
+      recompute();
+      render();
+    }
+  });
+
+  root.addEventListener("compositionend", function (event) {
+    if (event.target.id === "query") {
+      state.query = event.target.value;
+      render();
+    }
+  });
+
+  root.addEventListener("input", function (event) {
+    if (event.target.id === "query") {
+      if (event.isComposing) return;
+      state.query = event.target.value;
+      render();
+    } else if (event.target.id === "temp") {
+      state.tempText = event.target.value;
+      render();
+    }
+  });
+
+  root.addEventListener("change", function (event) {
+    if (event.target.id === "occasion") {
+      state.occasion = event.target.value;
+      render();
+    } else if (event.target.id === "with-accessory") {
+      state.withAccessory = !!event.target.checked;
+      render();
+    } else if (event.target.id === "restore-arm") {
+      state.restoreArmed = !!event.target.checked;
+      render();
+    } else if (event.target.id === "import-file") {
+      var file = event.target.files && event.target.files[0];
+      event.target.value = "";
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var result = Logic.previewMerge(state.data, state.data.items, state.local, String(reader.result || ""));
+        if (!result.ok) {
+          state.importError = result.error;
+          state.importPreview = null;
+        } else {
+          state.importError = "";
+          state.importPreview = result.preview;
+        }
+        render();
+      };
+      reader.onerror = function () {
+        state.importError = "文件没有读出来，衣橱没有改动。";
+        state.importPreview = null;
+        render();
+      };
+      reader.readAsText(file, "utf-8");
+    }
+  });
 
   fetch("data.json", { cache: "no-store" })
-    .then((res) => {
+    .then(function (res) {
       if (!res.ok) throw new Error("无法读取 data.json（" + res.status + "）");
       return res.json();
     })
-    .then((data) => {
+    .then(function (data) {
       state.data = data;
-      const def = data.scoring && data.scoring.default_temp;
-      state.tempText = def == null ? "" : String(def);
+      document.title = data.title || "我的衣橱";
+      var stored = Logic.readLocal(window.localStorage);
+      state.local = stored.state || Logic.emptyLocal();
+      state.storageError = stored.ok ? "" : (stored.error || "");
+      var cleaned = [];
+      var dropped = 0;
+      (state.local.extraItems || []).forEach(function (raw) {
+        var result = Logic.sanitizeItem(data, raw, { scope: "local" });
+        if (result.ok) cleaned.push(result.item);
+        else dropped += 1;
+      });
+      state.local.extraItems = cleaned;
+      if (dropped) {
+        state.storageError = (state.storageError ? state.storageError + " " : "") + "有 " + dropped + " 件本机新增无法识别，没有放进衣橱。";
+        persist();
+      }
+      state.tempText = Logic.initialTempText(data);
+      if ((data.occasions || []).every(function (row) { return row.id !== state.occasion; }) && data.occasions && data.occasions[0]) {
+        state.occasion = data.occasions[0].id;
+      }
+      recompute();
       render();
     })
-    .catch((err) => {
+    .catch(function (err) {
       bootError("加载失败：" + (err && err.message ? err.message : err) + "。请通过网页服务器打开，或检查 data.json。");
     });
 })();
